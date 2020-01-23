@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">  
+	<f:section title="${%title}">
+    	<f:entry title="${%awsAccessKey}" field="awsAccessKey" help="/plugin/zadviser-api/help-awsAccessKey.html">     	
+        	<div class="zadviser-aws-access-key" id="zadviser-aws-access-key">
+        		<f:password name="awsAccessKey"/>
+        	</div> 	
+      	</f:entry>
+		<f:entry title="${%encryptionKey}" field="encryptionKey" help="/plugin/zadviser-api/help-encryptionKey.html">
+			<f:password name="encryptionKey"/>
+		</f:entry>
+		<f:entry title="${%initialDateRange}" field="initialDateRange" help="/plugin/zadviser-api/help-initialDateRange.html">
+        	<f:textbox style="width:10%" default="30"/>
+		</f:entry>
+	</f:section>
+</j:jelly>
