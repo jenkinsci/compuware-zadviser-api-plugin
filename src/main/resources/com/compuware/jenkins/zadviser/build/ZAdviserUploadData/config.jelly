@@ -6,7 +6,7 @@
 		a.configure { padding: 0px 0px 0px 15px; }
 	</style>
 
-	<f:entry title="${%csvFilePath}" field="csvFilePath" help="/plugin/zadviser-api/help-csvFilePath.html">
+	<f:entry title="${%csvFilePath}" field="csvFilePath" help="/plugin/compuware-zadviser-api/help-csvFilePath.html">
        	<f:textbox style="max-width: 50%; vertical-align:top;" default=""/>
   		<a style="padding: 0px 0px 0px 15px;" href="${rootURL}/configure#zadviser-aws-access-key">${%manageLink}</a>
 	</f:entry>

@@ -1,13 +1,13 @@
 <div>
 The purpose of the JCL is to 1) dump the zAdviser SMF records to a temporary dataset from either an SMF dataset or an SMF logstream and 2) Create a csv file from the temporary dataset created in step one.  The following rules apply to the JCL modifications you may make.
 
-•	If using IFASMFDL specify a logstream name
-•	If using IFASMFDP specify an input dataset
-•	DATE parameter is overridden by Jenkins parameter {zzzz} if it is specified.
-•	TYPE must specify the Compuware zAdviser SMF record type, per the SMF_ID parameter 
-•	The OUTDD parameter must be a temporary dataset that is passed to the ROICOPY step.
-•	The //CSVOUT DD DCB attributes must not be changed.
-•	If your ECC libraries are not in the LNKLIST, specify the SLCXLOAD and SLCXAUTH libraries on the //STEPLIB.
+<li>If using IFASMFDL specify a logstream name</li>
+<li>If using IFASMFDP specify an input dataset</li>
+<li>DATE parameter is overridden by Jenkins parameter {zzzz} if it is specified.</li>
+<li>TYPE must specify the Compuware zAdviser SMF record type, per the SMF_ID parameter</li> 
+<li>The OUTDD parameter must be a temporary dataset that is passed to the ROICOPY step.</li>
+<li>The //CSVOUT DD DCB attributes must not be changed.</li>
+<li>If your ECC libraries are not in the LNKLIST, specify the SLCXLOAD and SLCXAUTH libraries on the //STEPLIB.</li>
 <p/>
 <pre>
 //ZADVISER JOB (\'EXTRACT\',4WOODWARD),                  
@@ -17,19 +17,19 @@ The purpose of the JCL is to 1) dump the zAdviser SMF records to a temporary dat
 //             REGION=0M,                                
 //             NOTIFY=&SYSUID                         
 //*
-//* DO NOT TOUCH THE DATE FIELD(S) BELOW AS THEY WILL BE OVERRIDDEN WHEN JCL IS PROCESSED
+//*  DO NOT TOUCH THE DATE FIELD(S) BELOW AS THEY WILL BE OVERRIDDEN WHEN JCL IS PROCESSED
 //*                                                                                                
 //*  DUMP ZADVISER SMF RECORDS (NON-LOGSTREAM)
 //*                                                       
 //STEP1    EXEC PGM=IFASMFDP                                 
-//SMFIN    DD DISP=SHR,DSN=MIS.SMF.CW01.DAILY                
+//SMFIN    DD  DISP=SHR,DSN=MIS.SMF.CW01.DAILY                
 //OUTDD1   DD  DISP=(,PASS),DSN=&&SMFOUT,                    
 //             UNIT=VIO,SPACE=(CYL,(3000,3000),RLSE),       
 //             DCB=(RECFM=VBS,LRECL=32760,BLKSIZE=4096)   
 //SYSPRINT DD  SYSOUT=*                                   
 //SYSIN    DD  *                                            
  INDD(SMFIN,OPTIONS(DUMP))                                   
-DATE(XXXXX,XXXXX)
+ DATE(XXXXX,XXXXX)
  OUTDD(OUTDD1,TYPE(241))                                   
 //*                                                      
 //*  DUMP ZADVISER SMF RECORDS (IF CUST. IS USING LOGSTREAM)
@@ -41,7 +41,7 @@ DATE(XXXXX,XXXXX)
 //SYSPRINT DD  SYSOUT=*                                   
 //SYSIN    DD  *                                            
  LSNAME(IFASMF.CW01.SMFDATA,OPTIONS(DUMP))   
-DATE(XXXXX,XXXXX)
+ DATE(XXXXX,XXXXX)
  OUTDD(OUTDD1,TYPE(241))
 //*                                                      
 //*  CONVERT TO .CSV                                     

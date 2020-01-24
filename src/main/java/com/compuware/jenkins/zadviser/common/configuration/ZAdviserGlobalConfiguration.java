@@ -38,18 +38,16 @@ import net.sf.json.JSONObject;
  */
 @Extension
 public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
-	// Constants
-	private static Logger m_logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
+	private static Logger logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
 
 	// Member Variables
 	private Secret awsAccessKey;
 	private Secret encryptionKey;
 	private String initialDateRange;
-	private boolean shouldEncrypt = true;
 	private Properties lastExecutionTimes = new Properties();
 
 	// Used to indicate if the configuration needs saving; used only in the context of migration.
-	protected transient boolean m_needsSaving = false;
+	protected transient boolean needsSaving = false;
 
 	/**
 	 * Returns the singleton instance.
@@ -75,7 +73,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 * @return TRUE if the configuration needs saving.
 	 */
 	public boolean needsSaving() {
-		return m_needsSaving;
+		return needsSaving;
 	}
 
 	/**
@@ -87,7 +85,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 		if (globalConfig.needsSaving()) {
 			globalConfig.save();
 
-			m_logger.info("Compuware global zAdviser configuration has been saved."); //$NON-NLS-1$
+			logger.info("Compuware global zAdviser configuration has been saved."); //$NON-NLS-1$
 		}
 	}
 
@@ -159,34 +157,6 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 */
 	public void setInitialDateRange(String initialDateRange) {
 		this.initialDateRange = initialDateRange;
-	}
-	
-	/**
-	 * Returns the Should Encrypt. Used for databinding.
-	 * 
-	 * @return the shouldEncrypt
-	 */
-	public boolean getShouldEncrypt() {
-		return shouldEncrypt;
-	}
-
-	/**
-	 * Returns the Should Encrypt. Used for databinding.
-	 * 
-	 * @return the shouldEncrypt
-	 */
-	public boolean shouldEncrypt() {
-		return shouldEncrypt;
-	}
-
-	/**
-	 * Sets the Should Encrypt.
-	 * 
-	 * @param shouldEncrypt
-	 *            the Should Encrypt
-	 */
-	public void setShouldEncrypt(boolean shouldEncrypt) {
-		this.shouldEncrypt = shouldEncrypt;		
 	}
 
 	/**
