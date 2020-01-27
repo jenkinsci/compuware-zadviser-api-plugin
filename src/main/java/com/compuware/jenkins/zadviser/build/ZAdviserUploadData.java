@@ -70,7 +70,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'CSV File Path'.
+	 * Gets the value of the csvFilePath attribute.
 	 * 
 	 * @return <code>String</code> value of csvFilePath
 	 */
@@ -79,10 +79,10 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Sets the value of the 'CSV file path'.
+	 * Sets the value of the csvFilePath attribute.
 	 * 
 	 * @param csvFilePath
-	 *            the CSV file path
+	 *            the path to the CSV file to upload
 	 */
 	public void setCsvFilePath(String csvFilePath) {
 		this.csvFilePath = csvFilePath;
@@ -120,6 +120,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 * 
 		 * @see hudson.tasks.BuildStepDescriptor#isApplicable(java.lang.Class)
 		 */
+		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			// Indicates that this builder can be used with all kinds of project types

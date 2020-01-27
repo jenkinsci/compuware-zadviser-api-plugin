@@ -103,66 +103,66 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	}
 
 	/**
-	 * Returns the AWS Access Key. Used for databinding.
+	 * Returns the value of the awsAccessKey attribute. Used for databinding.
 	 * 
-	 * @return the AWS Access Key
+	 * @return the value of the awsAccessKey attribute
 	 */
 	public Secret getAwsAccessKey() {
 		return awsAccessKey;
 	}
 
 	/**
-	 * Sets the AWS Access Key.
+	 * Sets the awsAccesskey attribute.
 	 * 
 	 * @param awsAccessKey
-	 *            the AWS Access Key
+	 *            the AWS access key
 	 */
 	public void setAwsAccessKey(Secret awsAccessKey) {
 		this.awsAccessKey = awsAccessKey;
 	}
 
 	/**
-	 * Returns the Encryption Key. Used for databinding.
+	 * Returns the value of the encryptionKey attribute. Used for databinding.
 	 * 
-	 * @return the Encryption Key
+	 * @return the value of the encryptionKey attribute
 	 */
 	public Secret getEncryptionKey() {
 		return encryptionKey;
 	}
 
 	/**
-	 * Sets the Encryption Key.
+	 * Sets the encryptionKey attribute.
 	 * 
 	 * @param encryptionKey
-	 *            the Encryption Key
+	 *            the Encryption key
 	 */
 	public void setEncryptionKey(Secret encryptionKey) {
 		this.encryptionKey = encryptionKey;
 	}
 
 	/**
-	 * Returns the Initial Date Range. Used for databinding.
+	 * Returns the value of the initialDateRange attribute. Used for databinding.
 	 * 
-	 * @return the initialDateRange
+	 * @return the value of the initialDateRange attribute
 	 */
 	public String getInitialDateRange() {
 		return initialDateRange;
 	}
 
 	/**
-	 * Sets the Initial Date Range.
+	 * Sets the value of the initialDateRange attribute.
 	 * 
 	 * @param initialDateRange
-	 *            the Initial Date Range
+	 *            the initial date range
 	 */
 	public void setInitialDateRange(String initialDateRange) {
 		this.initialDateRange = initialDateRange;
 	}
 
 	/**
-	 * Returns the lastExecutionTimes. Used for dataabinding.
+	 * Returns the value of the lastExecutionTimes attribute. Used for dataabinding.
 	 * 
-	 * @return the lastExecutionTimes
+	 * @return the value of the lastExecutionTimes attribute
 	 */
 	public Properties getLastExecutionTimes() {
 		return lastExecutionTimes;

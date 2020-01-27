@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -76,8 +77,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	private String jcl;
 	private String unencryptedCsvFilePath;
 	private String encryptedCsvFilePath;
-	private boolean shouldEncrypt = false;
-	private boolean shouldUpload = true;
+	private boolean encryptData = false;
+	private boolean uploadData = true;
 
 	private FilePath jclFile;
 	
@@ -105,7 +106,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the unique identifier of the 'Host connection'.
+	 * Gets the value of the connectionId attribute.
 	 * 
 	 * @return <code>String</code> value of connectionId
 	 */
@@ -114,7 +115,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Login credentials'.
+	 * Gets the value of the credentialsId attribute.
 	 * 
 	 * @return <code>String</code> value of credentialsId
 	 */
@@ -123,7 +124,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Job Card'.
+	 * Gets the value of the jcl attribute.
 	 * 
 	 * @return <code>String</code> value of jcl
 	 */
@@ -132,7 +133,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Encrypted CSV File Path'.
+	 * Gets the value of the encryptedCsvFilePath attribute.
 	 * 
 	 * @return <code>String</code> value of encryptedCsvFilePath
 	 */
@@ -141,7 +142,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Unencrypted CSV File Path'.
+	 * Gets the value of the unencryptedCsvFilePath attribute.
 	 * 
 	 * @return <code>String</code> value of unencryptedCsvFilePath
 	 */
@@ -150,41 +151,43 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Returns the Should Encrypt. Used for databinding.
+	 * Returns the value of the encryptData attribute. Used for databinding.
 	 * 
-	 * @return the shouldEncrypt
+	 * @return the value of the encryptData attribute
 	 */
-	public boolean getShouldEncrypt() {
-		return shouldEncrypt;
+	public boolean isEncryptData() {
+		return encryptData;
 	}
 
 	/**
-	 * Sets the Should Encrypt.
+	 * Sets the encryptData attribute.
 	 * 
-	 * @param shouldEncrypt
-	 *            the Should Encrypt
+	 * @param encryptData
+	 *            the flag to encrypt data
 	 */
-	public void setShouldEncrypt(boolean shouldEncrypt) {
-		this.shouldEncrypt = shouldEncrypt;		
+	@DataBoundSetter
+	public void setEncryptData(boolean encryptData) {
+		this.encryptData = encryptData;
 	}
 
 	/**
-	 * Returns the Should Upload. Used for databinding.
+	 * Returns the value of the uploadData attribute. Used for databinding.
 	 * 
-	 * @return the shouldUpload
+	 * @return the value of the uploadData attribute
 	 */
-	public boolean getShouldUpload() {
-		return shouldUpload;
+	public boolean isUploadData() {
+		return uploadData;
 	}
 
 	/**
-	 * Sets the Should Upload.
+	 * Sets the uploadData attribute.
 	 * 
-	 * @param shouldUpload
-	 *            the Should Upload
+	 * @param uploadData
+	 *            the flag to upload data
 	 */
-	public void setShouldUpload(boolean shouldUpload) {
-		this.shouldUpload = shouldUpload;		
+	@DataBoundSetter
+	public void setUploadData(boolean uploadData) {
+		this.uploadData = uploadData;
 	}
 
 	/*
@@ -525,12 +528,12 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
 			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
 
-			if (getShouldEncrypt()) {
+			if (isEncryptData()) {
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM, encryptionKeyStr);
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
 			}
 
-			if (getShouldUpload()) {
+			if (isUploadData()) {
 				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM, awsAccessKeyStr);
 			}
 
