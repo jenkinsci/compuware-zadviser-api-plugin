@@ -29,7 +29,7 @@ The purpose of the JCL is to 1) dump the zAdviser SMF records to a temporary dat
 //SYSPRINT DD  SYSOUT=*                                   
 //SYSIN    DD  *                                            
  INDD(SMFIN,OPTIONS(DUMP))                                   
- DATE(XXXXX,XXXXX)
+ DATE(START,END)
  OUTDD(OUTDD1,TYPE(241))                                   
 //*                                                      
 //*  DUMP ZADVISER SMF RECORDS (IF CUST. IS USING LOGSTREAM)
@@ -41,7 +41,7 @@ The purpose of the JCL is to 1) dump the zAdviser SMF records to a temporary dat
 //SYSPRINT DD  SYSOUT=*                                   
 //SYSIN    DD  *                                            
  LSNAME(IFASMF.CW01.SMFDATA,OPTIONS(DUMP))   
- DATE(XXXXX,XXXXX)
+ DATE(START,END)
  OUTDD(OUTDD1,TYPE(241))
 //*                                                      
 //*  CONVERT TO .CSV                                     
