@@ -17,11 +17,10 @@
 package com.compuware.jenkins.zadviser.build.utils;
 
 /**
- * Constants for use by the ZAdviser PII Hashing plugin.
+ * Constants for use by the zAdviser API plugin.
  */
 @SuppressWarnings("nls")
 public class ZAdviserUtilitiesConstants {
-
 	/**
 	 * Private constructor.
 	 * <p>
@@ -32,8 +31,7 @@ public class ZAdviserUtilitiesConstants {
 	}
 
 	// Constants
-
-	public static final String ZADVISER_MINIMUM_CLI_VERSION = "19.4.1";//"20.2.1";
+	public static final String ZADVISER_MINIMUM_CLI_VERSION = "20.2.1";
 
 	public static final String ZADVISER_CLI_BAT = "ZAdviserCLI.bat";
 	public static final String ZADVISER_CLI_SH = "ZAdviserCLI.sh";
@@ -45,10 +43,9 @@ public class ZAdviserUtilitiesConstants {
 
 	// Data collection step
 	public static final String JCL_FILE_PATH_PARM = "-jclFilePath";
-	public static final String ENCRYPTED_CSV_FILE_PATH_PARM = "-encryptedCsvFilePath";
 	public static final String UNENCRYPTED_CSV_FILE_PATH_PARM = "-unencryptedCsvFilePath";
+	public static final String ENCRYPTED_CSV_FILE_PATH_PARM = "-encryptedCsvFilePath";
 	public static final String LAST_DATE_RUN_PARM = "-lastDateRun";
-	public static final String UPLOAD_DATA_PARM = "-uploadData";
 	public static final String ZADVISER_LAST_RUN_FILE = "/zAdviserLastRun.properties";
 
 	// Data upload step

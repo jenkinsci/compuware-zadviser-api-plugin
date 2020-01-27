@@ -16,12 +16,9 @@
  */
 package com.compuware.jenkins.zadviser.build;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.channels.FileLock;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -32,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -47,7 +45,6 @@ import com.compuware.jenkins.zadviser.Messages;
 import com.compuware.jenkins.zadviser.build.utils.ZAdviserUtilitiesConstants;
 import com.compuware.jenkins.zadviser.common.configuration.ZAdviserGlobalConfiguration;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -74,14 +71,14 @@ import net.sf.json.JSONObject;
  * Captures the configuration information for zAdviser download data build step.
  */
 public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
-
+	// Member Variables
 	private String connectionId;
 	private String credentialsId;
 	private String jcl;
 	private String unencryptedCsvFilePath;
 	private String encryptedCsvFilePath;
-	private boolean shouldEncrypt = false;
-	private boolean shouldUpload = true;
+	private boolean encryptData = false;
+	private boolean uploadData = true;
 
 	private FilePath jclFile;
 	
@@ -109,7 +106,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the unique identifier of the 'Host connection'.
+	 * Gets the value of the connectionId attribute.
 	 * 
 	 * @return <code>String</code> value of connectionId
 	 */
@@ -118,7 +115,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Login credentials'.
+	 * Gets the value of the credentialsId attribute.
 	 * 
 	 * @return <code>String</code> value of credentialsId
 	 */
@@ -127,7 +124,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Job Card'.
+	 * Gets the value of the jcl attribute.
 	 * 
 	 * @return <code>String</code> value of jcl
 	 */
@@ -136,7 +133,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Encrypted CSV File Path'.
+	 * Gets the value of the encryptedCsvFilePath attribute.
 	 * 
 	 * @return <code>String</code> value of encryptedCsvFilePath
 	 */
@@ -145,7 +142,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the 'Unencrypted CSV File Path'.
+	 * Gets the value of the unencryptedCsvFilePath attribute.
 	 * 
 	 * @return <code>String</code> value of unencryptedCsvFilePath
 	 */
@@ -154,59 +151,43 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Returns the Should Encrypt. Used for databinding.
+	 * Returns the value of the encryptData attribute. Used for databinding.
 	 * 
-	 * @return the shouldEncrypt
+	 * @return the value of the encryptData attribute
 	 */
-	public boolean getShouldEncrypt() {
-		return shouldEncrypt;
+	public boolean isEncryptData() {
+		return encryptData;
 	}
 
 	/**
-	 * Returns the Should Encrypt. Used for databinding.
+	 * Sets the encryptData attribute.
 	 * 
-	 * @return the shouldEncrypt
+	 * @param encryptData
+	 *            the flag to encrypt data
 	 */
-	public boolean shouldEncrypt() {
-		return shouldEncrypt;
+	@DataBoundSetter
+	public void setEncryptData(boolean encryptData) {
+		this.encryptData = encryptData;
 	}
 
 	/**
-	 * Sets the Should Encrypt.
+	 * Returns the value of the uploadData attribute. Used for databinding.
 	 * 
-	 * @param shouldEncrypt
-	 *            the Should Encrypt
+	 * @return the value of the uploadData attribute
 	 */
-	public void setShouldEncrypt(boolean shouldEncrypt) {
-		this.shouldEncrypt = shouldEncrypt;		
+	public boolean isUploadData() {
+		return uploadData;
 	}
 
 	/**
-	 * Returns the Should Upload. Used for databinding.
+	 * Sets the uploadData attribute.
 	 * 
-	 * @return the shouldUpload
+	 * @param uploadData
+	 *            the flag to upload data
 	 */
-	public boolean getShouldUpload() {
-		return shouldUpload;
-	}
-
-	/**
-	 * Returns the Should Upload. Used for databinding.
-	 * 
-	 * @return the shouldUpload
-	 */
-	public boolean shouldUpload() {
-		return shouldUpload;
-	}
-
-	/**
-	 * Sets the Should Upload.
-	 * 
-	 * @param shouldUpload
-	 *            the Should Upload
-	 */
-	public void setShouldUpload(boolean shouldUpload) {
-		this.shouldUpload = shouldUpload;		
+	@DataBoundSetter
+	public void setUploadData(boolean uploadData) {
+		this.uploadData = uploadData;
 	}
 
 	/*
@@ -241,6 +222,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * 
 		 * @see hudson.tasks.BuildStepDescriptor#isApplicable(java.lang.Class)
 		 */
+		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			// Indicates that this builder can be used with all kinds of project types
@@ -438,8 +420,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		public String getDefaultJcl() {
 			StringBuilder builder = new StringBuilder();			
-			try (InputStream stream = readResource("defaultJcl.jcl");
-					Scanner scanner = new Scanner(stream, "UTF-8")) {
+			try (InputStream stream = readResource("defaultJcl.jcl"); //$NON-NLS-1$
+					Scanner scanner = new Scanner(stream, "UTF-8")) { //$NON-NLS-1$
 				while (scanner.hasNextLine()) {
 					String line = scanner.nextLine();
 					
@@ -501,6 +483,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			// Get zAdviser global configuration
 			ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
+			String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getEncryptedValue();
 			String encryptionKeyStr = zAdviserGlobalConfiguration.getEncryptionKey().getEncryptedValue();
 			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
 
@@ -509,9 +492,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
 			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
 			
-			String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
+			String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 
+			// build the argument list
 			ArgumentListBuilder args = new ArgumentListBuilder();
 			args.add(cliScriptFileRemote);
 			args.add(CommonConstants.HOST_PARM, host);
@@ -530,28 +514,30 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			args.add(CommonConstants.TIMEOUT_PARM, timeout);
 			args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
-			if (zAdviserGlobalConfiguration.shouldEncrypt()) {
-				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM, encryptionKeyStr);
-			}
+			args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.DOWNLOAD_STEP);
 
 			// Read the last execution time for the host.
 			//String lastExecutionTime = getLastExecutionTimeForHost(host, run, listener);
 			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
-			
 			if (lastExecutionTime != null) {
 				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
 			} else {
 				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
 			}
 
-			args.add(ZAdviserUtilitiesConstants.UPLOAD_DATA_PARM, Boolean.toString(shouldUpload()));
-
 			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
-			args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
 			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
-			args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.DOWNLOAD_STEP);
 
-			logger.println("Launch arguments: " + args.toString());
+			if (isEncryptData()) {
+				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM, encryptionKeyStr);
+				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
+			}
+
+			if (isUploadData()) {
+				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM, awsAccessKeyStr);
+			}
+
+			logger.println("Launch arguments: " + args.toString()); //$NON-NLS-1$
 
 			// create the CLI workspace (in case it doesn't already exist)
 			EnvVars env = run.getEnvironment(listener);

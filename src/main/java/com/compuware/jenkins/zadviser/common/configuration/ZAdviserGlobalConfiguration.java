@@ -1,14 +1,14 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2020 Compuware Corporation
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice
  * shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
@@ -38,22 +38,20 @@ import net.sf.json.JSONObject;
  */
 @Extension
 public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
-	// Constants
-	private static Logger m_logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
+	private static Logger logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
 
 	// Member Variables
 	private Secret awsAccessKey;
 	private Secret encryptionKey;
 	private String initialDateRange;
-	private boolean shouldEncrypt = true;
 	private Properties lastExecutionTimes = new Properties();
 
 	// Used to indicate if the configuration needs saving; used only in the context of migration.
-	protected transient boolean m_needsSaving = false;
+	protected transient boolean needsSaving = false;
 
 	/**
 	 * Returns the singleton instance.
-	 * 
+	 *
 	 * @return the Jenkins managed singleton for the configuration object
 	 */
 	public static ZAdviserGlobalConfiguration get() {
@@ -71,11 +69,11 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	/**
 	 * Return TRUE if the configuration needs saving.
-	 * 
+	 *
 	 * @return TRUE if the configuration needs saving.
 	 */
 	public boolean needsSaving() {
-		return m_needsSaving;
+		return needsSaving;
 	}
 
 	/**
@@ -87,13 +85,13 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 		if (globalConfig.needsSaving()) {
 			globalConfig.save();
 
-			m_logger.info("Compuware global zAdviser configuration has been saved."); //$NON-NLS-1$
+			logger.info("Compuware global zAdviser configuration has been saved."); //$NON-NLS-1$
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see hudson.model.Descriptor#configure(org.kohsuke.stapler.StaplerRequest, net.sf.json.JSONObject)
 	 */
 	@Override
@@ -105,94 +103,66 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	}
 
 	/**
-	 * Returns the AWS Access Key. Used for databinding.
-	 * 
-	 * @return the AWS Access Key
+	 * Returns the value of the awsAccessKey attribute. Used for databinding.
+	 *
+	 * @return the value of the awsAccessKey attribute
 	 */
 	public Secret getAwsAccessKey() {
 		return awsAccessKey;
 	}
 
 	/**
-	 * Sets the AWS Access Key.
-	 * 
+	 * Sets the awsAccesskey attribute.
+	 *
 	 * @param awsAccessKey
-	 *            the AWS Access Key
+	 *            the AWS access key
 	 */
 	public void setAwsAccessKey(Secret awsAccessKey) {
-		this.awsAccessKey = awsAccessKey;
+		this.awsAccessKey = handleEmpty(awsAccessKey == null ? null : awsAccessKey);
 	}
 
 	/**
-	 * Returns the Encryption Key. Used for databinding.
-	 * 
-	 * @return the Encryption Key
+	 * Returns the value of the encryptionKey attribute. Used for databinding.
+	 *
+	 * @return the value of the encryptionKey attribute
 	 */
 	public Secret getEncryptionKey() {
 		return encryptionKey;
 	}
 
 	/**
-	 * Sets the Encryption Key.
-	 * 
+	 * Sets the encryptionKey attribute.
+	 *
 	 * @param encryptionKey
-	 *            the Encryption Key
+	 *            the Encryption key
 	 */
 	public void setEncryptionKey(Secret encryptionKey) {
-		this.encryptionKey = encryptionKey;
+		this.encryptionKey = handleEmpty(encryptionKey == null ? null : encryptionKey);
 	}
 
 	/**
-	 * Returns the Initial Date Range. Used for databinding.
-	 * 
-	 * @return the initialDateRange
+	 * Returns the value of the initialDateRange attribute. Used for databinding.
+	 *
+	 * @return the value of the initialDateRange attribute
 	 */
 	public String getInitialDateRange() {
 		return initialDateRange;
 	}
 
 	/**
-	 * Sets the Initial Date Range.
-	 * 
+	 * Sets the value of the initialDateRange attribute.
+	 *
 	 * @param initialDateRange
-	 *            the Initial Date Range
+	 *            the initial date range
 	 */
 	public void setInitialDateRange(String initialDateRange) {
 		this.initialDateRange = initialDateRange;
 	}
-	
-	/**
-	 * Returns the Should Encrypt. Used for databinding.
-	 * 
-	 * @return the shouldEncrypt
-	 */
-	public boolean getShouldEncrypt() {
-		return shouldEncrypt;
-	}
 
 	/**
-	 * Returns the Should Encrypt. Used for databinding.
-	 * 
-	 * @return the shouldEncrypt
-	 */
-	public boolean shouldEncrypt() {
-		return shouldEncrypt;
-	}
-
-	/**
-	 * Sets the Should Encrypt.
-	 * 
-	 * @param shouldEncrypt
-	 *            the Should Encrypt
-	 */
-	public void setShouldEncrypt(boolean shouldEncrypt) {
-		this.shouldEncrypt = shouldEncrypt;		
-	}
-
-	/**
-	 * Returns the lastExecutionTimes. Used for dataabinding.
-	 * 
-	 * @return the lastExecutionTimes
+	 * Returns the value of the lastExecutionTimes attribute. Used for dataabinding.
+	 *
+	 * @return the value of the lastExecutionTimes attribute
 	 */
 	public Properties getLastExecutionTimes() {
 		return lastExecutionTimes;
@@ -200,10 +170,10 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	/**
 	 * Validation for the initial date range text field.
-	 * 
+	 *
 	 * @param value
 	 *            value passed from the config.jelly "Initial date range" field
-	 * 
+	 *
 	 * @return validation message
 	 */
 	public FormValidation doCheckInitialDateRange(@QueryParameter String value) {
@@ -221,9 +191,9 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	/**
 	 * Returns the last execution time for the given host.
-	 * 
+	 *
 	 * @param host the host
-	 * 
+	 *
 	 * @return the last execution time; can be null
 	 */
 	public String getLastExecutionTime(String host) {
@@ -232,11 +202,22 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	/**
 	 * Sets the last execution time for the given host.
-	 * 
+	 *
 	 * @param host the host
 	 * @param lastExecutionTime the current time in milliseconds
 	 */
 	public void updateLastExecutionTime(String host, long lastExecutionTime) {
 		lastExecutionTimes.put(host, Long.toString(lastExecutionTime));
 	}
+
+	/**
+	 * Handles an empty Secret so it does not appear masked.
+	 *
+	 * @param secret the Secret to analyze.
+	 *
+	 * @return updated Secret
+	 */
+    private static Secret handleEmpty(Secret secret) {
+        return secret == null ? null : secret.getPlainText().isEmpty() ? null : secret;
+    }
 }
