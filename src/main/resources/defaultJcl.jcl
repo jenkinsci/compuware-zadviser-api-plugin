@@ -1,5 +1,5 @@
-//ZADVISER JOB (\'EXTRACT\',4WOODWARD),
-//             \'CPWR\',
+//ZADVISER JOB ('EXTRACT',4WOODWARD),
+//             'CPWR',
 //             CLASS=A,
 //             MSGCLASS=X,
 //             REGION=0M,
