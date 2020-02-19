@@ -1,14 +1,14 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2020 Compuware Corporation
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice
  * shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
@@ -81,10 +81,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	private boolean uploadData = true;
 
 	private FilePath jclFile;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param connectionId
 	 *            a unique host connection identifier
 	 * @param credentialsId
@@ -107,7 +107,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the connectionId attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of connectionId
 	 */
 	public String getConnectionId() {
@@ -116,7 +116,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the credentialsId attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of credentialsId
 	 */
 	public String getCredentialsId() {
@@ -125,7 +125,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the jcl attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of jcl
 	 */
 	public String getJcl() {
@@ -134,7 +134,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the encryptedCsvFilePath attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of encryptedCsvFilePath
 	 */
 	public String getEncryptedCsvFilePath() {
@@ -143,7 +143,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the unencryptedCsvFilePath attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of unencryptedCsvFilePath
 	 */
 	public String getUnencryptedCsvFilePath() {
@@ -152,7 +152,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Returns the value of the encryptData attribute. Used for databinding.
-	 * 
+	 *
 	 * @return the value of the encryptData attribute
 	 */
 	public boolean isEncryptData() {
@@ -161,7 +161,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Sets the encryptData attribute.
-	 * 
+	 *
 	 * @param encryptData
 	 *            the flag to encrypt data
 	 */
@@ -172,7 +172,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Returns the value of the uploadData attribute. Used for databinding.
-	 * 
+	 *
 	 * @return the value of the uploadData attribute
 	 */
 	public boolean isUploadData() {
@@ -181,7 +181,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Sets the uploadData attribute.
-	 * 
+	 *
 	 * @param uploadData
 	 *            the flag to upload data
 	 */
@@ -192,7 +192,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see hudson.tasks.Builder#getDescriptor()
 	 */
 	@Override
@@ -219,7 +219,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.tasks.BuildStepDescriptor#isApplicable(java.lang.Class)
 		 */
 		@SuppressWarnings("rawtypes")
@@ -231,7 +231,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.model.Descriptor#configure(org.kohsuke.stapler.StaplerRequest, net.sf.json.JSONObject)
 		 */
 		@Override
@@ -242,7 +242,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.model.Descriptor#getDisplayName()
 		 */
 		@Override
@@ -252,10 +252,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'Host connection' field.
-		 * 
+		 *
 		 * @param connectionId
 		 *            unique identifier for the host connection passed from the config.jelly "connectionId" field
-		 * 
+		 *
 		 * @return validation message
 		 */
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
@@ -269,10 +269,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'Login credentials' field.
-		 * 
+		 *
 		 * @param credentialsId
 		 *            login credentials passed from the config.jelly "credentialsId" field
-		 * 
+		 *
 		 * @return validation message
 		 */
 		public FormValidation doCheckCredentialsId(@QueryParameter String credentialsId) {
@@ -286,10 +286,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'JCL' field.
-		 * 
+		 *
 		 * @param jcl
 		 *            the jcl passed from the config.jelly "jcl" field
-		 * 
+		 *
 		 * @return validation message
 		 */
 		public FormValidation doCheckJcl(@QueryParameter String jcl) {
@@ -303,10 +303,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'Encrypted CSV File Path' field.
-		 * 
+		 *
 		 * @param encryptedCsvFilePath
 		 *            the encrypted CSV file path passed from the config.jelly "encryptedCsvFilePath" field
-		 * 
+		 *
 		 * @return validation message
 		 */
 		public FormValidation doCheckEncryptedCsvFilePath(@QueryParameter String encryptedCsvFilePath) {
@@ -320,10 +320,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'Unencrypted CSV File Path' field.
-		 * 
+		 *
 		 * @param unencryptedCsvFilePath
 		 *            the unencrypted CSV file path passed from the config.jelly "unencryptedCsvFilePath" field
-		 * 
+		 *
 		 * @return validation message
 		 */
 		public FormValidation doCheckUnencryptedCsvFilePath(@QueryParameter String unencryptedCsvFilePath) {
@@ -337,14 +337,14 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Fills in the Host Connection selection box with applicable connections.
-		 * 
+		 *
 		 * @param context
 		 *            filter for host connections
 		 * @param connectionId
 		 *            an existing host connection identifier; can be null
 		 * @param project
 		 *            the Jenkins project
-		 * 
+		 *
 		 * @return host connection selections
 		 */
 		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
@@ -370,14 +370,14 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Fills in the Login Credentials selection box with applicable connections.
-		 * 
+		 *
 		 * @param context
 		 *            filter for login credentials
 		 * @param credentialsId
 		 *            existing login credentials; can be null
 		 * @param project
 		 *            the Jenkins project
-		 * 
+		 *
 		 * @return login credentials selection
 		 */
 		public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Jenkins context, @QueryParameter String credentialsId,
@@ -404,9 +404,9 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Find the requested file using the classloader and return an input stream.
-		 * 
+		 *
 		 * @param fileName file name to open for input
-		 * 
+		 *
 		 * @return InputStream the file requested
 		 */
 		private InputStream readResource(String fileName) {
@@ -415,19 +415,19 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Get the default JCL.
-		 * 
+		 *
 		 * @return default JCL
 		 */
 		public String getDefaultJcl() {
-			StringBuilder builder = new StringBuilder();			
+			StringBuilder builder = new StringBuilder();
 			try (InputStream stream = readResource("defaultJcl.jcl"); //$NON-NLS-1$
 					Scanner scanner = new Scanner(stream, "UTF-8")) { //$NON-NLS-1$
 				while (scanner.hasNextLine()) {
 					String line = scanner.nextLine();
-					
+
 					builder.append(line);
 					builder.append('\n');
-				}				
+				}
 			} catch (IOException e) {
 				// We should not get here, but just in case return empty string in this case; use can always copy from the help example.
 			}
@@ -438,7 +438,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.compuware.jenkins.build.SubmitJclBaseBuilder#perform(hudson.model.Run, hudson.FilePath, hudson.Launcher,
 	 * hudson.model.TaskListener)
 	 */
@@ -483,15 +483,15 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			// Get zAdviser global configuration
 			ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
-			String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getEncryptedValue();
-			String encryptionKeyStr = zAdviserGlobalConfiguration.getEncryptionKey().getEncryptedValue();
+			String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getPlainText();
+			String encryptionKeyStr = zAdviserGlobalConfiguration.getEncryptionKey().getPlainText();
 			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
 
 			// Create a temp file to pass the JCL to the CLI.
 			jclFile = workspace.createTextTempFile("jcl", ".txt", getJcl()); //$NON-NLS-1$ //$NON-NLS-2$
 			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
 			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
-			
+
 			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
 			String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 
@@ -529,15 +529,15 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
 
 			if (isEncryptData()) {
-				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM, encryptionKeyStr);
+				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
+				args.add(encryptionKeyStr, true);
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
 			}
 
 			if (isUploadData()) {
-				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM, awsAccessKeyStr);
+				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
+				args.add(awsAccessKeyStr, true);
 			}
-
-			logger.println("Launch arguments: " + args.toString()); //$NON-NLS-1$
 
 			// create the CLI workspace (in case it doesn't already exist)
 			EnvVars env = run.getEnvironment(listener);
@@ -551,10 +551,10 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			} else {
 				logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 				topazDataDir.deleteRecursive();
-				
+
 				zAdviserGlobalConfiguration.updateLastExecutionTime(host, System.currentTimeMillis());
 				zAdviserGlobalConfiguration.save();
-				
+
 				//updateLastExecutionForHost(host, run, listener);
 			}
 		} finally {
@@ -566,11 +566,11 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 //
 //	/**
 //	 * Get the last execution time for the specified host.
-//	 * 
+//	 *
 //	 * @param host the host
 //	 * @param run the run
 //	 * @param listener the job listener
-//	 * 
+//	 *
 //	 * @return last execution time; can be null
 //	 */
 //	protected String getLastExecutionTimeForHost(String host, Run<?, ?> run, TaskListener listener) {
@@ -597,7 +597,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 //
 //	/**
 //	 * Update the last execution time for the specified host.
-//	 * 
+//	 *
 //	 * @param host the host
 //	 * @param run the run
 //	 * @param listener the job listener
@@ -630,12 +630,12 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 //			logger.println("An error occurred attempting to update the last execution time for host '" + host + "'. " + e.getMessage());
 //		}
 //	}
-	
+
 	/**
 	 * Handle clean up when finished builder execution.
 	 * <p>
 	 * A temporary JCL file is created during builder execution that is consumed by the CLI and is deleted when execution is finished.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if unable to delete temporary JCL file
 	 * @throws InterruptedException
