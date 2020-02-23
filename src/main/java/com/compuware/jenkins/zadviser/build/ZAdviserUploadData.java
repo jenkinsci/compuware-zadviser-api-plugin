@@ -48,6 +48,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
@@ -207,19 +208,25 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 		logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
 
-		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
-		String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getPlainText();
-
-		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
-
 		ArgumentListBuilder args = new ArgumentListBuilder();
 		args.add(cliScriptFileRemote);
 
 		args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
+		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
+
 		args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
-		args.add(awsAccessKeyStr, true);
+		String accessKey = "";
+		Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
+		if (secret != null) {
+			accessKey = secret.getPlainText();
+		}
+
+		args.add(accessKey, true);
+
+		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
 		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
+
 		args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.UPLOAD_STEP);
 
 		// create the CLI workspace (in case it doesn't already exist)

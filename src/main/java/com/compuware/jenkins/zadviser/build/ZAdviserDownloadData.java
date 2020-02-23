@@ -62,6 +62,7 @@ import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.Secret;
 import hudson.util.ListBoxModel.Option;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
@@ -481,19 +482,12 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 			logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
 
-			// Get zAdviser global configuration
-			ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
-			String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getPlainText();
-			String encryptionKeyStr = zAdviserGlobalConfiguration.getEncryptionKey().getPlainText();
-			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
-
 			// Create a temp file to pass the JCL to the CLI.
 			jclFile = workspace.createTextTempFile("jcl", ".txt", getJcl()); //$NON-NLS-1$ //$NON-NLS-2$
 			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
 			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
 
 			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
-			String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 
 			// build the argument list
 			ArgumentListBuilder args = new ArgumentListBuilder();
@@ -516,27 +510,53 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.DOWNLOAD_STEP);
 
+			// Get zAdviser global configuration
+			ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
+
 			// Read the last execution time for the host.
 			//String lastExecutionTime = getLastExecutionTimeForHost(host, run, listener);
 			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
 			if (lastExecutionTime != null) {
 				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
 			} else {
+				String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
 				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
 			}
 
 			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
 			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
 
+			// User chose to encrypt data.
 			if (isEncryptData()) {
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
+				String encryptionKeyStr = "";
+				Secret secret = zAdviserGlobalConfiguration.getEncryptionKey();
+				if (secret != null) {
+					encryptionKeyStr = secret.getPlainText();
+				}
+
 				args.add(encryptionKeyStr, true);
+
+				String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
 			}
 
 			if (isUploadData()) {
 				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
-				args.add(awsAccessKeyStr, true);
+				String accessKey = "";
+				Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
+				if (secret != null) {
+					accessKey = secret.getPlainText();
+				}
+
+				args.add(accessKey, true);
+
+				String csvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
+				if (isEncryptData()) {
+					csvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
+				}
+
+				args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
 			}
 
 			// create the CLI workspace (in case it doesn't already exist)
