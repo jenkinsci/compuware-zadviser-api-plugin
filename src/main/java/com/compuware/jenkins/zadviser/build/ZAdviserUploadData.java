@@ -215,14 +215,12 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
-		args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
-		String accessKey = "";
 		Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
 		if (secret != null) {
-			accessKey = secret.getPlainText();
+			args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
+			String accessKey = secret.getPlainText();
+			args.add(accessKey, true);
 		}
-
-		args.add(accessKey, true);
 
 		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
 		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);

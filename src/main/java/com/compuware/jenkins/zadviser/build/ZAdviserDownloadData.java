@@ -528,28 +528,24 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			// User chose to encrypt data.
 			if (isEncryptData()) {
-				args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
-				String encryptionKeyStr = "";
 				Secret secret = zAdviserGlobalConfiguration.getEncryptionKey();
 				if (secret != null) {
-					encryptionKeyStr = secret.getPlainText();
+					args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
+					String encryptionKeyStr = secret.getPlainText();
+					args.add(encryptionKeyStr, true);
 				}
-
-				args.add(encryptionKeyStr, true);
 
 				String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
 				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
 			}
 
 			if (isUploadData()) {
-				args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
-				String accessKey = "";
 				Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
 				if (secret != null) {
-					accessKey = secret.getPlainText();
+					args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
+					String accessKey = secret.getPlainText();
+					args.add(accessKey, true);
 				}
-
-				args.add(accessKey, true);
 
 				String csvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
 				if (isEncryptData()) {
