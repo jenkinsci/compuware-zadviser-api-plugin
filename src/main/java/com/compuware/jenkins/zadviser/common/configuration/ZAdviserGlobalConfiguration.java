@@ -41,7 +41,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	private static Logger logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
 
 	// Member Variables
-	private Secret awsAccessKey;
+	private Secret accessKey;
 	private Secret encryptionKey;
 	private String initialDateRange;
 	private Properties lastExecutionTimes = new Properties();
@@ -103,22 +103,22 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	}
 
 	/**
-	 * Returns the value of the awsAccessKey attribute. Used for databinding.
+	 * Returns the value of the accessKey attribute. Used for databinding.
 	 *
-	 * @return the value of the awsAccessKey attribute
+	 * @return the value of the accessKey attribute
 	 */
-	public Secret getAwsAccessKey() {
-		return awsAccessKey;
+	public Secret getAccessKey() {
+		return accessKey;
 	}
 
 	/**
-	 * Sets the awsAccesskey attribute.
+	 * Sets the accesskey attribute.
 	 *
-	 * @param awsAccessKey
-	 *            the AWS access key
+	 * @param accessKey
+	 *            the access key
 	 */
-	public void setAwsAccessKey(Secret awsAccessKey) {
-		this.awsAccessKey = handleEmpty(awsAccessKey == null ? null : awsAccessKey);
+	public void setAccessKey(Secret accessKey) {
+		this.accessKey = handleEmpty(accessKey == null ? null : accessKey);
 	}
 
 	/**

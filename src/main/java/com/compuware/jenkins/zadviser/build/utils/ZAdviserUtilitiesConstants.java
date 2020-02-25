@@ -37,7 +37,7 @@ public class ZAdviserUtilitiesConstants {
 	public static final String ZADVISER_CLI_SH = "ZAdviserCLI.sh";
 
 	// Common / global configuration
-	public static final String AWS_ACCESS_KEY_PARM = "-awsAccessKey";
+	public static final String ACCESS_KEY_PARM = "-accessKey";
 	public static final String ENCRYPTION_KEY_PARM = "-encryptionKey";
 	public static final String INITIAL_DATE_RANGE_PARM = "-initialDateRange";
 

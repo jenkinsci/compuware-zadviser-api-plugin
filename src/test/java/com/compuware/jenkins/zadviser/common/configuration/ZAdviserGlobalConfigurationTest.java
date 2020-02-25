@@ -40,7 +40,7 @@ import net.sf.json.JSONObject;
 @RunWith(MockitoJUnitRunner.class)
 public class ZAdviserGlobalConfigurationTest {
 
-	private static final String EXPECTED_AWS_ACCESS_KEY = "123foobar321";
+	private static final String EXPECTED_ACCESS_KEY = "123foobar321";
 	private static final String EXPECTED_ENCRYPTION_KEY = "blahblah";
 	private static final String EXPECTED_INITIAL_DATE_RANGE = "1";
 
@@ -98,7 +98,7 @@ public class ZAdviserGlobalConfigurationTest {
     @Test
     public void testConfigureValid() {
     	ZAdviserGlobalConfiguration testConfig = new ZAdviserGlobalConfiguration();
-    	formData.put("awsAccessKey", Secret.fromString(EXPECTED_AWS_ACCESS_KEY));
+    	formData.put("accessKey", Secret.fromString(EXPECTED_ACCESS_KEY));
     	formData.put("encryptionKey", Secret.fromString(EXPECTED_ENCRYPTION_KEY));
     	formData.put("initialDateRange", EXPECTED_INITIAL_DATE_RANGE);
         assertTrue(testConfig.configure(request, formData));

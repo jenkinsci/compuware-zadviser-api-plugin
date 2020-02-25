@@ -144,19 +144,19 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @param csvFilePath
 		 *            the CSV file path passed from the config.jelly "csvFilePath" field
-		 * @param awsAccessKey
-		 *            the CSV file path passed from the config.jelly "csvFilePath" field
+		 * @param accessKey
+		 *            the access key passed from the config.jelly "accessKey" field
 		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath, @QueryParameter String awsAccessKey) {
+		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath, @QueryParameter String accessKey) {
 			String tempValue = StringUtils.trimToEmpty(csvFilePath);
 			if (tempValue.isEmpty()) {
 				return FormValidation.error(Messages.checkCsvFilePathError());
 			} else {
 				//ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
-				if (awsAccessKey == null || StringUtils.isEmpty(awsAccessKey)) {
-					return FormValidation.error(Messages.checkMissingAwsAccessKeyError());
+				if (accessKey == null || StringUtils.isEmpty(accessKey)) {
+					return FormValidation.error(Messages.checkMissingAccessKeyError());
 				}
 			}
 
@@ -215,9 +215,9 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
-		Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
+		Secret secret = zAdviserGlobalConfiguration.getAccessKey();
 		if (secret != null) {
-			args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
+			args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
 			String accessKey = secret.getPlainText();
 			args.add(accessKey, true);
 		}

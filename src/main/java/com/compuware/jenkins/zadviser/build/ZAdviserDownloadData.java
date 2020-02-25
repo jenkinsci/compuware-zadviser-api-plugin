@@ -540,9 +540,9 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			}
 
 			if (isUploadData()) {
-				Secret secret = zAdviserGlobalConfiguration.getAwsAccessKey();
+				Secret secret = zAdviserGlobalConfiguration.getAccessKey();
 				if (secret != null) {
-					args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM);
+					args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
 					String accessKey = secret.getPlainText();
 					args.add(accessKey, true);
 				}
