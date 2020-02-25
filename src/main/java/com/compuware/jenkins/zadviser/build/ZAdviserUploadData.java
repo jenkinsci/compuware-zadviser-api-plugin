@@ -222,6 +222,11 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 			args.add(accessKey.getPlainText(), true);
 		}
 
+		String customerId = zAdviserGlobalConfiguration.getCustomerId();
+		if (StringUtils.isNotEmpty(customerId)) {
+			args.add(ZAdviserUtilitiesConstants.CUSTOMER_ID_PARM, customerId);
+		}
+
 		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
 		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
 

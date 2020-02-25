@@ -5,6 +5,9 @@
 	   		<a id="zadviser-access-key"></a>
          	<f:password name="accessKey"/>
       	</f:entry>
+        <f:entry title="${%customerId}" field="customerId" help="/plugin/compuware-zadviser-api/help-customerId.html">
+      	    <f:textbox default=""/>
+        </f:entry>
 		<f:entry title="${%encryptionKey}" field="encryptionKey" help="/plugin/compuware-zadviser-api/help-encryptionKey.html">
 			<f:password name="encryptionKey"/>
 		</f:entry>
