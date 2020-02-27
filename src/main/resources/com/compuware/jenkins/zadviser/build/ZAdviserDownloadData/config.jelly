@@ -6,8 +6,8 @@
     <f:entry title="${%loginCredentials}" field="credentialsId" help="/plugin//compuware-zadviser-api/help-credentialsId.html">
         <c:select default=""/>
     </f:entry>
-    <f:entry title="${%jcl}" field="jcl" help="/plugin/compuware-zadviser-api/help-jcl.html">
-       	<f:textarea default="${descriptor.getDefaultJcl()}"/>
+     <f:entry title="${%jcl}" field="jcl" help="/plugin/compuware-zadviser-api/help-jcl.html">
+        <f:textarea style="height:20em;" default="${descriptor.getDefaultJcl()}"/>
     </f:entry>
     <f:entry title="${%unencryptedCsvFilePath}" field="unencryptedCsvFilePath" help="/plugin/compuware-zadviser-api/help-unencryptedCsvFilePath.html">
       	<f:textbox default=""/>
@@ -20,4 +20,9 @@
 	<f:entry title="${%uploadZAdviserData}" field="uploadData" help="/plugin/compuware-zadviser-api/help-uploadData.html">
     	<f:checkbox name="uploadData" checked="${instance.isUploadData}" default="true"/>
 	</f:entry>
+	<f:block>
+		<div align="right">
+  			<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
+  		</div>
+  	</f:block>
 </j:jelly>

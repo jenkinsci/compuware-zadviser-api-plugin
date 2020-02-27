@@ -1,10 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	<f:section title="${%title}">
-    	<f:entry title="${%accessKey}" field="accessKey" help="/plugin/compuware-zadviser-api/help-accessKey.html">
-        	<div class="zadviser-access-key" id="zadviser-access-key">
-        		<f:password name="accessKey"/>
-        	</div>
+	   	<f:entry title="${%accessKey}" field="accessKey" help="/plugin/compuware-zadviser-api/help-accessKey.html">
+	   		<a id="zadviser-access-key"></a>
+         	<f:password name="accessKey"/>
       	</f:entry>
 		<f:entry title="${%encryptionKey}" field="encryptionKey" help="/plugin/compuware-zadviser-api/help-encryptionKey.html">
 			<f:password name="encryptionKey"/>

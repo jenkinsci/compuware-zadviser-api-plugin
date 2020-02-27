@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import com.compuware.jenkins.zadviser.common.configuration.ZAdviserGlobalConfiguration;
 
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 
 /**
  * Test cases for {@link ZAdviserUploadData}.
@@ -53,33 +54,38 @@ public class ZAdviserUploadDataTest {
 
 	@Before
 	public void setUp() throws Exception {
-		zAdviserGlobalConfig = new ZAdviserGlobalConfiguration();
+		zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
 		request = mock(StaplerRequest.class);
 	}
 
 	@Test
 	public void testNullCsvFilePath() {
 		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(null, null).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(null).kind);
 	}
 
 	@Test
 	public void testEmptyCsvFilePath() {
 		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath("", null).kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(" ", null).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath("").kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(" ").kind);
 	}
 
 	@Test
 	public void testValidCsvFilePath() {
 		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH, EXPECTED_ACCESS_KEY).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
 	}
 
 	@Test
 	public void testMissingAccessKey() {
 		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH, null).kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH, "").kind);
+		zAdviserGlobalConfig.setAccessKey(null);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(""));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
 	}
 }

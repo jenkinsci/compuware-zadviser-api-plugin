@@ -142,20 +142,22 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		/**
 		 * Validator for the 'CSV File path' field.
 		 *
+		 * <p>
+		 * If a valid CSV file pathe exists, then the access key will be validated for existence.
+		 *
 		 * @param csvFilePath
 		 *            the CSV file path passed from the config.jelly "csvFilePath" field
-		 * @param accessKey
-		 *            the access key passed from the config.jelly "accessKey" field
 		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath, @QueryParameter String accessKey) {
+		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath) {
 			String tempValue = StringUtils.trimToEmpty(csvFilePath);
 			if (tempValue.isEmpty()) {
 				return FormValidation.error(Messages.checkCsvFilePathError());
 			} else {
-				//ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
-				if (accessKey == null || StringUtils.isEmpty(accessKey)) {
+				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+				Secret accessKeySecret = zAdviserGlobalConfig.getAccessKey();
+				if (accessKeySecret == null || StringUtils.isEmpty(accessKeySecret.getEncryptedValue())) {
 					return FormValidation.error(Messages.checkMissingAccessKeyError());
 				}
 			}
@@ -213,6 +215,8 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
+		args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.UPLOAD_STEP);
+
 		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
 		Secret secret = zAdviserGlobalConfiguration.getAccessKey();
@@ -224,8 +228,6 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
 		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
-
-		args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.UPLOAD_STEP);
 
 		// create the CLI workspace (in case it doesn't already exist)
 		EnvVars env = run.getEnvironment(listener);
