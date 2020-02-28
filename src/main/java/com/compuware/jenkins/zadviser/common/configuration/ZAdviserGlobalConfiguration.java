@@ -42,7 +42,6 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	// Member Variables
 	private Secret accessKey;
-	private Secret awsAccessKey;
 	private String customerId;
 	private Secret encryptionKey;
 	private String initialDateRange;
