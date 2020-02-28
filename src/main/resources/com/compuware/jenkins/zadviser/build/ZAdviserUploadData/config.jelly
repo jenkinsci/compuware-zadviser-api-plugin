@@ -8,8 +8,6 @@
        	<f:textbox default=""/>
 	</f:entry>
 	<f:block>
-		<div align="left">
-  			<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
-  		</div>
+ 		<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
   	</f:block>
 </j:jelly>

@@ -17,12 +17,12 @@
     	   	<f:textbox default=""/>
 		</f:entry>
    	</f:optionalBlock>
-   	<f:entry title="${%uploadZAdviserData}" help="/plugin/compuware-zadviser-api/help-uploadData.html">
-    	<f:checkbox field="uploadData" checked="${instance.isUploadData}" default="true"/>
-    </f:entry>
+	<f:entry field="uploadData" help="/plugin/compuware-zadviser-api/help-uploadData.html">
+		<div style="text-align:left">
+    		<f:checkbox title="${%uploadZAdviserData}" checked="${instance.isUploadData}" default="true"/>
+    	</div>
+	</f:entry>
 	<f:block>
-		<div align="left">
-  			<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
-  		</div>
+ 		<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
   	</f:block>
 </j:jelly>
