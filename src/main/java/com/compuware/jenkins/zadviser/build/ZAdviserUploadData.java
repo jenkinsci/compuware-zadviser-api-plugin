@@ -1,14 +1,14 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2020 Compuware Corporation
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice
  * shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -48,19 +48,20 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
 /**
- * Captures the configuration information for zAdvise processing build step.
+ * Captures the configuration information for the zAdviser upload build step.
  */
 public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
-
+	// Member Variables
 	private String csvFilePath;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param csvFilePath
 	 *            CSV file path
 	 */
@@ -71,7 +72,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Gets the value of the csvFilePath attribute.
-	 * 
+	 *
 	 * @return <code>String</code> value of csvFilePath
 	 */
 	public String getCsvFilePath() {
@@ -80,7 +81,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 	/**
 	 * Sets the value of the csvFilePath attribute.
-	 * 
+	 *
 	 * @param csvFilePath
 	 *            the path to the CSV file to upload
 	 */
@@ -90,7 +91,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see hudson.tasks.Builder#getDescriptor()
 	 */
 	@Override
@@ -105,7 +106,6 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	@Symbol("zAdviserUpload")
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
 		/**
 		 * Constructor.
 		 * <p>
@@ -117,7 +117,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.tasks.BuildStepDescriptor#isApplicable(java.lang.Class)
 		 */
 		@SuppressWarnings("rawtypes")
@@ -129,7 +129,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.model.Descriptor#configure(org.kohsuke.stapler.StaplerRequest, net.sf.json.JSONObject)
 		 */
 		@Override
@@ -140,22 +140,23 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'CSV File path' field.
-		 * 
+		 * <p>
+		 * If a valid CSV file pathe exists, then the access key will be validated for existence.
+		 *
 		 * @param csvFilePath
 		 *            the CSV file path passed from the config.jelly "csvFilePath" field
-		 * @param awsAccessKey
-		 *            the CSV file path passed from the config.jelly "csvFilePath" field
-		 * 
+		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath, @QueryParameter String awsAccessKey) {
-			String tempValue = StringUtils.trimToEmpty(csvFilePath);
-			if (tempValue.isEmpty()) {
+		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath) {
+			if (StringUtils.isBlank(csvFilePath)) {
 				return FormValidation.error(Messages.checkCsvFilePathError());
 			} else {
-				//ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
-				if (awsAccessKey == null || StringUtils.isEmpty(awsAccessKey)) {
-					return FormValidation.error(Messages.checkMissingAwsAccessKeyError());
+				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+
+				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
+				if (accessKey == null || StringUtils.isBlank(accessKey.getPlainText())) {
+					return FormValidation.error(Messages.checkMissingAccessKeyError());
 				}
 			}
 
@@ -164,7 +165,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see hudson.model.Descriptor#getDisplayName()
 		 */
 		@Override
@@ -175,7 +176,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.compuware.jenkins.build.SubmitJclBaseBuilder#perform(hudson.model.Run, hudson.FilePath, hudson.Launcher,
 	 * hudson.model.TaskListener)
 	 */
@@ -192,6 +193,8 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		String cliVersion = CLIVersionUtils.getCLIVersion(cliDirectory, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 		CLIVersionUtils.checkCLICompatibility(cliVersion, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 
+		ArgumentListBuilder args = new ArgumentListBuilder();
+
 		Properties remoteProperties = vChannel.call(new RemoteSystemProperties());
 		String remoteFileSeparator = remoteProperties.getProperty(CommonConstants.FILE_SEPARATOR_PROPERTY_KEY);
 		boolean isShell = launcher.isUnix();
@@ -201,27 +204,26 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		logger.println("cliScriptFile: " + cliScriptFile); //$NON-NLS-1$
 		String cliScriptFileRemote = new FilePath(vChannel, cliScriptFile).getRemote();
 		logger.println("cliScriptFileRemote: " + cliScriptFileRemote); //$NON-NLS-1$
-
-		String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
-				+ UUID.randomUUID().toString();
-		FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
-		logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
-
-		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
-		String awsAccessKeyStr = zAdviserGlobalConfiguration.getAwsAccessKey().getEncryptedValue();
-
-		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
-
-		ArgumentListBuilder args = new ArgumentListBuilder();
 		args.add(cliScriptFileRemote);
 
+		// Get workspace configuration
+		String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
+				+ UUID.randomUUID().toString();
+		logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
 		args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
-		args.add(ZAdviserUtilitiesConstants.AWS_ACCESS_KEY_PARM, awsAccessKeyStr);
-		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
+		// Get upload configuration
 		args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.UPLOAD_STEP);
+		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
-		logger.println("Launch arguments: " + args.toString());
+		Secret accessKey = zAdviserGlobalConfiguration.getAccessKey();
+		if (accessKey != null) {
+			args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
+			args.add(accessKey.getPlainText(), true);
+		}
+
+		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
+		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
 
 		// create the CLI workspace (in case it doesn't already exist)
 		EnvVars env = run.getEnvironment(listener);
@@ -234,6 +236,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 			throw new AbortException("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
+			FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 			topazDataDir.deleteRecursive();
 		}
 	}
