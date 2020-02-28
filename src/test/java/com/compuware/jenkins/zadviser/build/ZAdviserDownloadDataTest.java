@@ -16,11 +16,10 @@
  */
 package com.compuware.jenkins.zadviser.build;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -29,125 +28,147 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.mock;
-
 import com.compuware.jenkins.zadviser.common.configuration.ZAdviserGlobalConfiguration;
 
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 
 /**
  * Test cases for {@link ZAdviserDownloadData}.
  */
+@SuppressWarnings("nls")
 public class ZAdviserDownloadDataTest {
-
 	// Builder expected values
 	/* @formatter:off */
 	private static final String EXPECTED_JCL = "some jcl";
 	private static final String EXPECTED_ENCRYPTED_CSV_FILE_PATH = "/test/encrypted.csv";
 	private static final String EXPECTED_UNENCRYPTED_CSV_FILE_PATH = "/test/unencrypted.csv";
+
+	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
+	private static final String EXPECTED_ENCRYPTION_KEY_VALUE = "encryptionKeyValue";
+
+	private static final String CW01 = "cw01";
+	private static final String CW02 = "cw02";
 	/* @formatter:on */
 
 	@ClassRule
 	public static final JenkinsRule jenkinsRule = new JenkinsRule();
 
 	@InjectMocks
-	ZAdviserGlobalConfiguration zAdviserGlobalConfig;
+	private ZAdviserGlobalConfiguration zAdviserGlobalConfig;
+	private ZAdviserDownloadData.DescriptorImpl descriptor;
 
 	@Mock
 	private StaplerRequest request;
 
 	@Before
 	public void setUp() throws Exception {
-		zAdviserGlobalConfig = new ZAdviserGlobalConfiguration();
+		zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+		descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		request = mock(StaplerRequest.class);
 	}
 
 	@Test
 	public void testNullJcl() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckJcl(null).kind);
 	}
 
 	@Test
 	public void testEmptyJcl() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckJcl("").kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckJcl(" ").kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckJcl(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckJcl(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidJcl() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertEquals(FormValidation.Kind.OK, descriptor.doCheckJcl(EXPECTED_JCL).kind);
 	}
 
 	@Test
 	public void testNullEncryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(null).kind);
 	}
 
 	@Test
 	public void testEmptyEncryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath("").kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(" ").kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidEncryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(EXPECTED_ENCRYPTION_KEY_VALUE));
+
 		assertEquals(FormValidation.Kind.OK, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
 	}
 
 	@Test
+	public void testValidEncryptedCsvFilePathWithoutAccessKey() {
+		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(EXPECTED_ENCRYPTION_KEY_VALUE));
+
+		zAdviserGlobalConfig.setAccessKey(null);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+	}
+
+	@Test
+	public void testValidEncryptedCsvFilePathWithoutEncryptionKey() {
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+
+		zAdviserGlobalConfig.setEncryptionKey(null);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(StringUtils.EMPTY));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(StringUtils.SPACE));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+	}
+
+	@Test
 	public void testNullUnencryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(null).kind);
 	}
 
 	@Test
 	public void testEmptyUnencryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath("").kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(" ").kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidUnencryptedCsvFilePath() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUnencryptedCsvFilePath(EXPECTED_UNENCRYPTED_CSV_FILE_PATH).kind);
 	}
 
 	@Test
 	public void testLoadDefaultJclNotNull() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertNotNull("Expected default JCL to not be null.", descriptor.getDefaultJcl());
 	}
 
 	@Test
 	public void testLoadDefaultJclNotEmpty() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertNotEquals("Expected default JCL to not be empty.", "", descriptor.getDefaultJcl());
 	}
 
 	@Test
 	public void testValidDefaultJcl() {
-		ZAdviserDownloadData.DescriptorImpl descriptor = new ZAdviserDownloadData.DescriptorImpl();
 		assertTrue(descriptor.getDefaultJcl().contains("//ZADVISER JOB"));
 	}
 
 	@Test
 	public void testLastExecutionTimeSingleHost() {
 		long lastExecutionTimeCw01 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime("cw01", lastExecutionTimeCw01);
+		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
 		zAdviserGlobalConfig.configure(request, new JSONObject());
 		zAdviserGlobalConfig.load();
 		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime("cw01"));
 		
 		lastExecutionTimeCw01 = 1L;
-		zAdviserGlobalConfig.updateLastExecutionTime("cw01", lastExecutionTimeCw01);
+		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
 		zAdviserGlobalConfig.configure(request, new JSONObject());
 		zAdviserGlobalConfig.load();
 		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime("cw01"));
@@ -156,15 +177,34 @@ public class ZAdviserDownloadDataTest {
 	@Test
 	public void testLastExecutionTimeMultipleHosts() {
 		long lastExecutionTimeCw01 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime("cw01", lastExecutionTimeCw01);
+		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
 		zAdviserGlobalConfig.configure(request, new JSONObject());
 		
 		long lastExecutionTimeCw02 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime("cw02", lastExecutionTimeCw02);
+		zAdviserGlobalConfig.updateLastExecutionTime(CW02, lastExecutionTimeCw02);
 		zAdviserGlobalConfig.configure(request, new JSONObject());
 
 		zAdviserGlobalConfig.load();
-		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime("cw01"));
-		assertEquals(Long.toString(lastExecutionTimeCw02), zAdviserGlobalConfig.getLastExecutionTime("cw02"));
+		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime(CW01));
+		assertEquals(Long.toString(lastExecutionTimeCw02), zAdviserGlobalConfig.getLastExecutionTime(CW02));
+	}
+
+	@Test
+	public void testUploadData() {
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.TRUE).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
+
+		zAdviserGlobalConfig.setAccessKey(null);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
+
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
+
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
 	}
 }

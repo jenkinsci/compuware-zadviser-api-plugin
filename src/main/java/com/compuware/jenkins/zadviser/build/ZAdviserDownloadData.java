@@ -25,7 +25,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -69,7 +69,7 @@ import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
 /**
- * Captures the configuration information for zAdviser download data build step.
+ * Captures the configuration information for zAdviser download/optional encrypt/optional upload build step.
  */
 public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	// Member Variables
@@ -98,7 +98,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	 *            unencrypted CSV file path
 	 */
 	@DataBoundConstructor
-	public ZAdviserDownloadData(String connectionId, String credentialsId, String jcl, String encryptedCsvFilePath, String unencryptedCsvFilePath) {
+	public ZAdviserDownloadData(String connectionId, String credentialsId, String jcl, String encryptedCsvFilePath,
+			String unencryptedCsvFilePath) {
 		this.connectionId = StringUtils.trimToEmpty(connectionId);
 		this.credentialsId = StringUtils.trimToEmpty(credentialsId);
 		this.jcl = StringUtils.trimToEmpty(jcl);
@@ -208,7 +209,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	@Symbol("zAdviserDownload")
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
 		/**
 		 * Constructor.
 		 * <p>
@@ -260,8 +260,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
-			String tempValue = StringUtils.trimToEmpty(connectionId);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(connectionId)) {
 				return FormValidation.error(Messages.checkHostConnectionError());
 			}
 
@@ -277,8 +276,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckCredentialsId(@QueryParameter String credentialsId) {
-			String tempValue = StringUtils.trimToEmpty(credentialsId);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(credentialsId)) {
 				return FormValidation.error(Messages.checkLoginCredentialsError());
 			}
 
@@ -294,8 +292,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckJcl(@QueryParameter String jcl) {
-			String tempValue = StringUtils.trimToEmpty(jcl);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(jcl)) {
 				return FormValidation.error(Messages.checkJclError());
 			}
 
@@ -311,9 +308,20 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckEncryptedCsvFilePath(@QueryParameter String encryptedCsvFilePath) {
-			String tempValue = StringUtils.trimToEmpty(encryptedCsvFilePath);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(encryptedCsvFilePath)) {
 				return FormValidation.error(Messages.checkEncryptedCsvFilePathError());
+			} else {
+				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+
+				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
+				if (accessKey == null) {
+					return FormValidation.error(Messages.checkMissingAccessKeyError());
+				} else {
+					Secret encryptionKey = zAdviserGlobalConfig.getEncryptionKey();
+					if (encryptionKey == null) {
+						return FormValidation.error(Messages.checkMissingEncryptionKeyError());
+					}
+				}
 			}
 
 			return FormValidation.ok();
@@ -328,11 +336,31 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckUnencryptedCsvFilePath(@QueryParameter String unencryptedCsvFilePath) {
-			String tempValue = StringUtils.trimToEmpty(unencryptedCsvFilePath);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(unencryptedCsvFilePath)) {
 				return FormValidation.error(Messages.checkUnencryptedCsvFilePathError());
 			}
 
+			return FormValidation.ok();
+		}
+
+		/**
+		 * Validator for the 'Upload Data' field.
+		 *
+		 * @param uploadData
+		 *            the upload data flag passed from the config.jelly "uploadData" field
+		 *
+		 * @return validation message
+		 */
+		public FormValidation doCheckUploadData(@QueryParameter Boolean uploadData) {
+			if (uploadData != null && uploadData.booleanValue()) {
+				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+
+				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
+				if (accessKey == null) {
+					return FormValidation.error(Messages.checkMissingAccessKeyError());
+				}
+			}
+				
 			return FormValidation.ok();
 		}
 
@@ -425,7 +453,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 					Scanner scanner = new Scanner(stream, "UTF-8")) { //$NON-NLS-1$
 				while (scanner.hasNextLine()) {
 					String line = scanner.nextLine();
-
 					builder.append(line);
 					builder.append('\n');
 				}
@@ -457,6 +484,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			String cliVersion = CLIVersionUtils.getCLIVersion(cliDirectory, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 			CLIVersionUtils.checkCLICompatibility(cliVersion, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 
+			ArgumentListBuilder args = new ArgumentListBuilder();
+
 			Properties remoteProperties = vChannel.call(new RemoteSystemProperties());
 			String remoteFileSeparator = remoteProperties.getProperty(CommonConstants.FILE_SEPARATOR_PROPERTY_KEY);
 			boolean isShell = launcher.isUnix();
@@ -466,73 +495,77 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			logger.println("cliScriptFile: " + cliScriptFile); //$NON-NLS-1$
 			String cliScriptFileRemote = new FilePath(vChannel, cliScriptFile).getRemote();
 			logger.println("cliScriptFileRemote: " + cliScriptFileRemote); //$NON-NLS-1$
-
-			// Get host connection configuration
-			HostConnection connection = globalConfig.getHostConnection(getConnectionId());
-			String host = ArgumentUtils.escapeForScript(connection.getHost());
-			String port = ArgumentUtils.escapeForScript(connection.getPort());
-			StandardUsernamePasswordCredentials credentials = globalConfig.getLoginInformation(run.getParent(), getCredentialsId());
-			String userId = ArgumentUtils.escapeForScript(credentials.getUsername());
-			String password = ArgumentUtils.escapeForScript(credentials.getPassword().getPlainText());
-			String protocol = connection.getProtocol();
-			String codePage = connection.getCodePage();
-			String timeout = ArgumentUtils.escapeForScript(connection.getTimeout());
-			String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
-					+ UUID.randomUUID().toString();
-			FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
-			logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
-
-			// Create a temp file to pass the JCL to the CLI.
-			jclFile = workspace.createTextTempFile("jcl", ".txt", getJcl()); //$NON-NLS-1$ //$NON-NLS-2$
-			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
-			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
-
-			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
-
-			// build the argument list
-			ArgumentListBuilder args = new ArgumentListBuilder();
 			args.add(cliScriptFileRemote);
+
+			// Get host configuration
+			HostConnection connection = globalConfig.getHostConnection(getConnectionId());
+			StandardUsernamePasswordCredentials credentials = globalConfig.getLoginInformation(run.getParent(), getCredentialsId());
+
+			String host = ArgumentUtils.escapeForScript(connection.getHost());
 			args.add(CommonConstants.HOST_PARM, host);
+
+			String port = ArgumentUtils.escapeForScript(connection.getPort());
 			args.add(CommonConstants.PORT_PARM, port);
+
+			String userId = ArgumentUtils.escapeForScript(credentials.getUsername());
 			args.add(CommonConstants.USERID_PARM, userId);
+
+			String password = ArgumentUtils.escapeForScript(credentials.getPassword().getPlainText());
 			args.add(CommonConstants.PW_PARM);
 			args.add(password, true);
 
-			// do not pass protocol on command line if null, empty, blank, or 'None'
+			String protocol = connection.getProtocol();
 			if (StringUtils.isNotBlank(protocol) && !StringUtils.equalsIgnoreCase(protocol, "none")) { //$NON-NLS-1$
 				CLIVersionUtils.checkProtocolSupported(cliVersion);
 				args.add(CommonConstants.PROTOCOL_PARM, protocol);
 			}
 
+			String codePage = connection.getCodePage();
 			args.add(CommonConstants.CODE_PAGE_PARM, codePage);
+
+			String timeout = ArgumentUtils.escapeForScript(connection.getTimeout());
 			args.add(CommonConstants.TIMEOUT_PARM, timeout);
+
+			// Get workspace configuration
+			String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
+					+ UUID.randomUUID().toString();
+			logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
 			args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
+			// Get download configuration
 			args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.DOWNLOAD_STEP);
-
-			// Get zAdviser global configuration
 			ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
-			// Read the last execution time for the host.
-			//String lastExecutionTime = getLastExecutionTimeForHost(host, run, listener);
+			jclFile = workspace.createTextTempFile("jcl", ".txt", getJcl()); //$NON-NLS-1$ //$NON-NLS-2$
+			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
+			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
+			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
 			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
-			if (lastExecutionTime != null) {
-				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
-			} else {
-				String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
-				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
-			}
+			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
 
 			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
 			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
+			if (lastExecutionTime != null) {
+				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
+			} else {
+				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
+			}
 
-			// User chose to encrypt data.
+			if (isEncryptData() || isUploadData()) {
+				// we need the access key for encryption in order to obtain the security rules
+				// we need the access key for upload in order to send data via SFTP
+				Secret accessKey = zAdviserGlobalConfiguration.getAccessKey();
+				if (accessKey != null) {
+					args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
+					args.add(accessKey.getPlainText(), true);
+				}
+			}
+
 			if (isEncryptData()) {
-				Secret secret = zAdviserGlobalConfiguration.getEncryptionKey();
-				if (secret != null) {
+				Secret encryptionKey = zAdviserGlobalConfiguration.getEncryptionKey();
+				if (encryptionKey != null) {
 					args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
-					String encryptionKeyStr = secret.getPlainText();
-					args.add(encryptionKeyStr, true);
+					args.add(encryptionKey.getPlainText(), true);
 				}
 
 				String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
@@ -540,18 +573,12 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			}
 
 			if (isUploadData()) {
-				Secret secret = zAdviserGlobalConfiguration.getAccessKey();
-				if (secret != null) {
-					args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
-					String accessKey = secret.getPlainText();
-					args.add(accessKey, true);
-				}
-
-				String csvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
+				String csvFilePathStr;
 				if (isEncryptData()) {
 					csvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
+				} else {
+					csvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
 				}
-
 				args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
 			}
 
@@ -566,12 +593,11 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				throw new AbortException("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
+				FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 				topazDataDir.deleteRecursive();
 
 				zAdviserGlobalConfiguration.updateLastExecutionTime(host, System.currentTimeMillis());
 				zAdviserGlobalConfiguration.save();
-
-				//updateLastExecutionForHost(host, run, listener);
 			}
 		} finally {
 			cleanUp();

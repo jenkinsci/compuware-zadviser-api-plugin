@@ -12,16 +12,16 @@
     <f:entry title="${%unencryptedCsvFilePath}" field="unencryptedCsvFilePath" help="/plugin/compuware-zadviser-api/help-unencryptedCsvFilePath.html">
       	<f:textbox default=""/>
     </f:entry>
-	<f:optionalBlock name="encryptData" field="encryptData" title="${%encryptZAdviserData}" inline="true" checked="${instance.isEncryptData}" help="/plugin/compuware-zadviser-api/help-encryptData.html">
+	<f:optionalBlock field="encryptData" title="${%encryptZAdviserData}" inline="true" checked="${instance.isEncryptData}" help="/plugin/compuware-zadviser-api/help-encryptData.html">
 		<f:entry title="${%encryptedCsvFilePath}" field="encryptedCsvFilePath" help="/plugin/compuware-zadviser-api/help-encryptedCsvFilePath.html">
     	   	<f:textbox default=""/>
 		</f:entry>
    	</f:optionalBlock>
-	<f:entry title="${%uploadZAdviserData}" field="uploadData" help="/plugin/compuware-zadviser-api/help-uploadData.html">
-    	<f:checkbox name="uploadData" checked="${instance.isUploadData}" default="true"/>
-	</f:entry>
+   	<f:entry title="${%uploadZAdviserData}" help="/plugin/compuware-zadviser-api/help-uploadData.html">
+    	<f:checkbox field="uploadData" checked="${instance.isUploadData}" default="true"/>
+    </f:entry>
 	<f:block>
-		<div align="right">
+		<div align="left">
   			<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
   		</div>
   	</f:block>

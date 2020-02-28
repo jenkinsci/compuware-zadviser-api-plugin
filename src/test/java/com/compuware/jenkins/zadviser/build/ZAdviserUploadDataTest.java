@@ -19,6 +19,7 @@ package com.compuware.jenkins.zadviser.build;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -35,19 +36,20 @@ import hudson.util.Secret;
 /**
  * Test cases for {@link ZAdviserUploadData}.
  */
+@SuppressWarnings("nls")
 public class ZAdviserUploadDataTest {
-
 	// Builder expected values
 	/* @formatter:off */
-	private static final String EXPECTED_ACCESS_KEY = "accesskey";
 	private static final String EXPECTED_CSV_FILE_PATH = "/test/encrypted.csv";
+	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
 	/* @formatter:on */
 
 	@ClassRule
 	public static final JenkinsRule jenkinsRule = new JenkinsRule();
 
 	@InjectMocks
-	ZAdviserGlobalConfiguration zAdviserGlobalConfig;
+	private ZAdviserGlobalConfiguration zAdviserGlobalConfig;
+	private ZAdviserUploadData.DescriptorImpl descriptor;
 
 	@Mock
 	private StaplerRequest request;
@@ -55,37 +57,36 @@ public class ZAdviserUploadDataTest {
 	@Before
 	public void setUp() throws Exception {
 		zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
+		descriptor = new ZAdviserUploadData.DescriptorImpl();
 		request = mock(StaplerRequest.class);
 	}
 
 	@Test
 	public void testNullCsvFilePath() {
-		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(null).kind);
 	}
 
 	@Test
 	public void testEmptyCsvFilePath() {
-		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath("").kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(" ").kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidCsvFilePath() {
-		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString("EXPECTED_ACCESS_KEY"));
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
 		assertEquals(FormValidation.Kind.OK, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
 	}
 
 	@Test
-	public void testMissingAccessKey() {
-		ZAdviserUploadData.DescriptorImpl descriptor = new ZAdviserUploadData.DescriptorImpl();
+	public void testValidCsvFilePathWithoutAccessKey() {
 		zAdviserGlobalConfig.setAccessKey(null);
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString(""));
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
 	}
 }

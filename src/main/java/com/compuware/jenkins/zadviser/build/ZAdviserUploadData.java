@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -53,10 +53,10 @@ import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
 /**
- * Captures the configuration information for zAdvise processing build step.
+ * Captures the configuration information for the zAdviser upload build step.
  */
 public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
-
+	// Member Variables
 	private String csvFilePath;
 
 	/**
@@ -106,7 +106,6 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	@Symbol("zAdviserUpload")
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-
 		/**
 		 * Constructor.
 		 * <p>
@@ -141,7 +140,6 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		/**
 		 * Validator for the 'CSV File path' field.
-		 *
 		 * <p>
 		 * If a valid CSV file pathe exists, then the access key will be validated for existence.
 		 *
@@ -151,13 +149,13 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 * @return validation message
 		 */
 		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath) {
-			String tempValue = StringUtils.trimToEmpty(csvFilePath);
-			if (tempValue.isEmpty()) {
+			if (StringUtils.isBlank(csvFilePath)) {
 				return FormValidation.error(Messages.checkCsvFilePathError());
 			} else {
 				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
-				Secret accessKeySecret = zAdviserGlobalConfig.getAccessKey();
-				if (accessKeySecret == null || StringUtils.isEmpty(accessKeySecret.getEncryptedValue())) {
+
+				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
+				if (accessKey == null || StringUtils.isBlank(accessKey.getPlainText())) {
 					return FormValidation.error(Messages.checkMissingAccessKeyError());
 				}
 			}
@@ -195,6 +193,8 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		String cliVersion = CLIVersionUtils.getCLIVersion(cliDirectory, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 		CLIVersionUtils.checkCLICompatibility(cliVersion, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 
+		ArgumentListBuilder args = new ArgumentListBuilder();
+
 		Properties remoteProperties = vChannel.call(new RemoteSystemProperties());
 		String remoteFileSeparator = remoteProperties.getProperty(CommonConstants.FILE_SEPARATOR_PROPERTY_KEY);
 		boolean isShell = launcher.isUnix();
@@ -204,26 +204,22 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		logger.println("cliScriptFile: " + cliScriptFile); //$NON-NLS-1$
 		String cliScriptFileRemote = new FilePath(vChannel, cliScriptFile).getRemote();
 		logger.println("cliScriptFileRemote: " + cliScriptFileRemote); //$NON-NLS-1$
-
-		String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
-				+ UUID.randomUUID().toString();
-		FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
-		logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
-
-		ArgumentListBuilder args = new ArgumentListBuilder();
 		args.add(cliScriptFileRemote);
 
+		// Get workspace configuration
+		String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
+				+ UUID.randomUUID().toString();
+		logger.println("topazCliWorkspace: " + topazCliWorkspace); //$NON-NLS-1$
 		args.add(CommonConstants.DATA_PARM, topazCliWorkspace);
 
+		// Get upload configuration
 		args.add(ZAdviserUtilitiesConstants.BUILD_STEP_PARAM, ZAdviserUtilitiesConstants.UPLOAD_STEP);
-
 		ZAdviserGlobalConfiguration zAdviserGlobalConfiguration = ZAdviserGlobalConfiguration.get();
 
-		Secret secret = zAdviserGlobalConfiguration.getAccessKey();
-		if (secret != null) {
+		Secret accessKey = zAdviserGlobalConfiguration.getAccessKey();
+		if (accessKey != null) {
 			args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
-			String accessKey = secret.getPlainText();
-			args.add(accessKey, true);
+			args.add(accessKey.getPlainText(), true);
 		}
 
 		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
@@ -240,6 +236,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 			throw new AbortException("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
+			FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 			topazDataDir.deleteRecursive();
 		}
 	}

@@ -19,7 +19,7 @@ package com.compuware.jenkins.zadviser.common.configuration;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -38,7 +38,7 @@ import net.sf.json.JSONObject;
  */
 @Extension
 public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
-	private static Logger logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
+	private static final Logger logger = Logger.getLogger("hudson.ZAdviserGlobalConfiguration"); //$NON-NLS-1$
 
 	// Member Variables
 	private Secret accessKey;
@@ -118,7 +118,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 *            the access key
 	 */
 	public void setAccessKey(Secret accessKey) {
-		this.accessKey = handleEmpty(accessKey == null ? null : accessKey);
+		this.accessKey = handleEmpty(accessKey);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 *            the Encryption key
 	 */
 	public void setEncryptionKey(Secret encryptionKey) {
-		this.encryptionKey = handleEmpty(encryptionKey == null ? null : encryptionKey);
+		this.encryptionKey = handleEmpty(encryptionKey);
 	}
 
 	/**
@@ -177,10 +177,9 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 * @return validation message
 	 */
 	public FormValidation doCheckInitialDateRange(@QueryParameter String value) {
-		String tempValue = StringUtils.trimToEmpty(value);
-		if (StringUtils.isNotEmpty(tempValue)) {
+		if (StringUtils.isNotBlank(value)) {
 			try {
-				Integer.parseUnsignedInt(tempValue);
+				Integer.parseUnsignedInt(StringUtils.trim(value));
 			} catch (NumberFormatException e) {
 				return FormValidation.error(Messages.checkInitialDateRangeError());
 			}
@@ -213,11 +212,12 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	/**
 	 * Handles an empty Secret so it does not appear masked.
 	 *
-	 * @param secret the Secret to analyze.
+	 * @param secret
+	 *            the Secret to analyze
 	 *
 	 * @return updated Secret
 	 */
     private static Secret handleEmpty(Secret secret) {
-        return secret == null ? null : secret.getPlainText().isEmpty() ? null : secret;
+		return (secret == null || StringUtils.isBlank(secret.getPlainText())) ? null : secret;
     }
 }
