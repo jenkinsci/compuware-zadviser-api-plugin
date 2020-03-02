@@ -38,6 +38,7 @@ public class ZAdviserUtilitiesConstants {
 
 	// Common / global configuration
 	public static final String ACCESS_KEY_PARM = "-accessKey";
+	public static final String CUSTOMER_ID_PARM = "-customerId";
 	public static final String ENCRYPTION_KEY_PARM = "-encryptionKey";
 	public static final String INITIAL_DATE_RANGE_PARM = "-initialDateRange";
 

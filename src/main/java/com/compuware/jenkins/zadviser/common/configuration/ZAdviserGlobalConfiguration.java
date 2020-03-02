@@ -42,6 +42,7 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 
 	// Member Variables
 	private Secret accessKey;
+	private String customerId;
 	private Secret encryptionKey;
 	private String initialDateRange;
 	private Properties lastExecutionTimes = new Properties();
@@ -119,6 +120,25 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	 */
 	public void setAccessKey(Secret accessKey) {
 		this.accessKey = handleEmpty(accessKey);
+	}
+
+	/**
+	 * Returns the value of the customerId attribute. Used for databinding.
+	 *
+	 * @return the value of the customerId attribute
+	 */
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	/**
+	 * Sets the customerId attribute.
+	 *
+	 * @param customerId
+	 *            the customer id
+	 */
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 
 	/**
