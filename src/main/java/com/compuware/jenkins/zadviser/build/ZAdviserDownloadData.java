@@ -76,8 +76,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	private String connectionId;
 	private String credentialsId;
 	private String jcl;
-	private String unencryptedCsvFilePath;
-	private String encryptedCsvFilePath;
+	private String unencryptedDataFile;
+	private String encryptedDataFile;
 	private boolean encryptData = false;
 	private boolean uploadData = true;
 
@@ -91,20 +91,20 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	 * @param credentialsId
 	 *            unique id of the selected credential
 	 * @param jcl
-	 *            job card used to instruct zAdviser to collect
-	 * @param encryptedCsvFilePath
-	 *            encrypted CSV file path
-	 * @param unencryptedCsvFilePath
-	 *            unencrypted CSV file path
+	 *            the jcl used to instruct zAdviser to collect
+	 * @param encryptedDataFile
+	 *            encrypted data file
+	 * @param unencryptedDataFile
+	 *            unencrypted data file
 	 */
 	@DataBoundConstructor
-	public ZAdviserDownloadData(String connectionId, String credentialsId, String jcl, String encryptedCsvFilePath,
-			String unencryptedCsvFilePath) {
+	public ZAdviserDownloadData(String connectionId, String credentialsId, String jcl, String encryptedDataFile,
+			String unencryptedDataFile) {
 		this.connectionId = StringUtils.trimToEmpty(connectionId);
 		this.credentialsId = StringUtils.trimToEmpty(credentialsId);
 		this.jcl = StringUtils.trimToEmpty(jcl);
-		this.encryptedCsvFilePath = StringUtils.trimToEmpty(encryptedCsvFilePath);
-		this.unencryptedCsvFilePath = StringUtils.trimToEmpty(unencryptedCsvFilePath);
+		this.encryptedDataFile = StringUtils.trimToEmpty(encryptedDataFile);
+		this.unencryptedDataFile = StringUtils.trimToEmpty(unencryptedDataFile);
 	}
 
 	/**
@@ -135,21 +135,21 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 	}
 
 	/**
-	 * Gets the value of the encryptedCsvFilePath attribute.
+	 * Gets the value of the encryptedDataFile attribute.
 	 *
-	 * @return <code>String</code> value of encryptedCsvFilePath
+	 * @return <code>String</code> value of encryptedDataFile
 	 */
-	public String getEncryptedCsvFilePath() {
-		return encryptedCsvFilePath;
+	public String getEncryptedDataFile() {
+		return encryptedDataFile;
 	}
 
 	/**
-	 * Gets the value of the unencryptedCsvFilePath attribute.
+	 * Gets the value of the unencryptedDataFile attribute.
 	 *
-	 * @return <code>String</code> value of unencryptedCsvFilePath
+	 * @return <code>String</code> value of unencryptedDataFile
 	 */
-	public String getUnencryptedCsvFilePath() {
-		return unencryptedCsvFilePath;
+	public String getUnencryptedDataFile() {
+		return unencryptedDataFile;
 	}
 
 	/**
@@ -300,16 +300,16 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		}
 
 		/**
-		 * Validator for the 'Encrypted CSV File Path' field.
+		 * Validator for the 'Encrypted Data File' field.
 		 *
-		 * @param encryptedCsvFilePath
-		 *            the encrypted CSV file path passed from the config.jelly "encryptedCsvFilePath" field
+		 * @param encryptedDataFile
+		 *            the encrypted data file passed from the config.jelly "encryptedDataFile" field
 		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckEncryptedCsvFilePath(@QueryParameter String encryptedCsvFilePath) {
-			if (StringUtils.isBlank(encryptedCsvFilePath)) {
-				return FormValidation.error(Messages.checkEncryptedCsvFilePathError());
+		public FormValidation doCheckEncryptedDataFile(@QueryParameter String encryptedDataFile) {
+			if (StringUtils.isBlank(encryptedDataFile)) {
+				return FormValidation.error(Messages.checkEncryptedDataFileError());
 			} else {
 				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
 
@@ -328,16 +328,16 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		}
 
 		/**
-		 * Validator for the 'Unencrypted CSV File Path' field.
+		 * Validator for the 'Unencrypted Data File' field.
 		 *
-		 * @param unencryptedCsvFilePath
-		 *            the unencrypted CSV file path passed from the config.jelly "unencryptedCsvFilePath" field
+		 * @param unencryptedDataFile
+		 *            the unencrypted data file passed from the config.jelly "unencryptedDataFile" field
 		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckUnencryptedCsvFilePath(@QueryParameter String unencryptedCsvFilePath) {
-			if (StringUtils.isBlank(unencryptedCsvFilePath)) {
-				return FormValidation.error(Messages.checkUnencryptedCsvFilePathError());
+		public FormValidation doCheckUnencryptedDataFile(@QueryParameter String unencryptedDataFile) {
+			if (StringUtils.isBlank(unencryptedDataFile)) {
+				return FormValidation.error(Messages.checkUnencryptedDataFileError());
 			}
 
 			return FormValidation.ok();
@@ -539,15 +539,18 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			jclFile = workspace.createTextTempFile("jcl", ".txt", getJcl()); //$NON-NLS-1$ //$NON-NLS-2$
 			String escapedJclFileName = ArgumentUtils.escapeForScript(jclFile.getRemote());
 			logger.println("JCL file path: " + escapedJclFileName); //$NON-NLS-1$
-			String unencryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
+			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
+
+			String unencryptedDataFileStr = getUnencryptedDataFile();
+			if (StringUtils.isNotBlank(unencryptedDataFileStr)) {
+				args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_DATA_FILE_PARM, ArgumentUtils.escapeForScript(unencryptedDataFileStr));
+			}
+
 			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
 			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
-
-			args.add(ZAdviserUtilitiesConstants.JCL_FILE_PATH_PARM, escapedJclFileName);
-			args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_CSV_FILE_PATH_PARM, unencryptedCsvFilePathStr);
 			if (lastExecutionTime != null) {
 				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
-			} else {
+			} else if (StringUtils.isNotBlank(initialDateRangeStr)) {
 				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
 			}
 
@@ -555,7 +558,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				// we need the access key for encryption in order to obtain the security rules
 				// we need the access key for upload in order to send data via SFTP
 				Secret accessKey = zAdviserGlobalConfiguration.getAccessKey();
-				if (accessKey != null) {
+				if (accessKey != null && StringUtils.isNotBlank(accessKey.getPlainText())) {
 					args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
 					args.add(accessKey.getPlainText(), true);
 				}
@@ -563,13 +566,15 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			if (isEncryptData()) {
 				Secret encryptionKey = zAdviserGlobalConfiguration.getEncryptionKey();
-				if (encryptionKey != null) {
+				if (encryptionKey != null && StringUtils.isNotBlank(encryptionKey.getPlainText())) {
 					args.add(ZAdviserUtilitiesConstants.ENCRYPTION_KEY_PARM);
 					args.add(encryptionKey.getPlainText(), true);
 				}
 
-				String encryptedCsvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
-				args.add(ZAdviserUtilitiesConstants.ENCRYPTED_CSV_FILE_PATH_PARM, encryptedCsvFilePathStr);
+				String encryptedDataFileStr = getEncryptedDataFile();
+				if (StringUtils.isNotBlank(encryptedDataFileStr)) {
+					args.add(ZAdviserUtilitiesConstants.ENCRYPTED_DATA_FILE_PARM, ArgumentUtils.escapeForScript(encryptedDataFileStr));
+				}
 			}
 
 			if (isUploadData()) {
@@ -578,13 +583,16 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 					args.add(ZAdviserUtilitiesConstants.CUSTOMER_ID_PARM, customerId);
 				}
 
-				String csvFilePathStr;
+				String uploadDataFileStr;
 				if (isEncryptData()) {
-					csvFilePathStr = ArgumentUtils.escapeForScript(getEncryptedCsvFilePath());
+					uploadDataFileStr = getEncryptedDataFile();
 				} else {
-					csvFilePathStr = ArgumentUtils.escapeForScript(getUnencryptedCsvFilePath());
+					uploadDataFileStr = getUnencryptedDataFile();
 				}
-				args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
+
+				if (StringUtils.isNotBlank(uploadDataFileStr)) {
+					args.add(ZAdviserUtilitiesConstants.UPLOAD_DATA_FILE_PARM, ArgumentUtils.escapeForScript(uploadDataFileStr));
+				}
 			}
 
 			// create the CLI workspace (in case it doesn't already exist)

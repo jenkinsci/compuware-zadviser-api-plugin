@@ -57,36 +57,36 @@ import net.sf.json.JSONObject;
  */
 public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	// Member Variables
-	private String csvFilePath;
+	private String uploadDataFile;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param csvFilePath
-	 *            CSV file path
+	 * @param uploadDataFile
+	 *            the data file to upload
 	 */
 	@DataBoundConstructor
-	public ZAdviserUploadData(String csvFilePath) {
-		this.csvFilePath = StringUtils.trimToEmpty(csvFilePath);
+	public ZAdviserUploadData(String uploadDataFile) {
+		this.uploadDataFile = StringUtils.trimToEmpty(uploadDataFile);
 	}
 
 	/**
-	 * Gets the value of the csvFilePath attribute.
+	 * Gets the value of the uploadDataFile attribute.
 	 *
-	 * @return <code>String</code> value of csvFilePath
+	 * @return <code>String</code> value of uploadDataFile
 	 */
-	public String getCsvFilePath() {
-		return csvFilePath;
+	public String getUploadDataFile() {
+		return uploadDataFile;
 	}
 
 	/**
-	 * Sets the value of the csvFilePath attribute.
+	 * Sets the value of the uploadDataFile attribute.
 	 *
-	 * @param csvFilePath
-	 *            the path to the CSV file to upload
+	 * @param uploadDataFile
+	 *            the data file to upload
 	 */
-	public void setCsvFilePath(String csvFilePath) {
-		this.csvFilePath = csvFilePath;
+	public void setUploadDataFile(String uploadDataFile) {
+		this.uploadDataFile = uploadDataFile;
 	}
 
 	/*
@@ -139,18 +139,18 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		}
 
 		/**
-		 * Validator for the 'CSV File path' field.
+		 * Validator for the 'Upload Data File' field.
 		 * <p>
-		 * If a valid CSV file pathe exists, then the access key will be validated for existence.
+		 * If a valid data file exists, then the access key will be validated for existence.
 		 *
-		 * @param csvFilePath
-		 *            the CSV file path passed from the config.jelly "csvFilePath" field
+		 * @param uploadDataFile
+		 *            the upload data file passed from the config.jelly "uploadDataFile" field
 		 *
 		 * @return validation message
 		 */
-		public FormValidation doCheckCsvFilePath(@QueryParameter String csvFilePath) {
-			if (StringUtils.isBlank(csvFilePath)) {
-				return FormValidation.error(Messages.checkCsvFilePathError());
+		public FormValidation doCheckUploadDataFile(@QueryParameter String uploadDataFile) {
+			if (StringUtils.isBlank(uploadDataFile)) {
+				return FormValidation.error(Messages.checkUploadDataFileError());
 			} else {
 				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
 
@@ -227,8 +227,8 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 			args.add(ZAdviserUtilitiesConstants.CUSTOMER_ID_PARM, customerId);
 		}
 
-		String csvFilePathStr = ArgumentUtils.escapeForScript(getCsvFilePath());
-		args.add(ZAdviserUtilitiesConstants.CSV_FILE_PATH_PARM, csvFilePathStr);
+		String uploadDataFileStr = ArgumentUtils.escapeForScript(getUploadDataFile());
+		args.add(ZAdviserUtilitiesConstants.UPLOAD_DATA_FILE_PARM, uploadDataFileStr);
 
 		// create the CLI workspace (in case it doesn't already exist)
 		EnvVars env = run.getEnvironment(listener);

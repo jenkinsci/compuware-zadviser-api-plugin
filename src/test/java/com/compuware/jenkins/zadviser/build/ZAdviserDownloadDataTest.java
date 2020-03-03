@@ -42,8 +42,8 @@ public class ZAdviserDownloadDataTest {
 	// Builder expected values
 	/* @formatter:off */
 	private static final String EXPECTED_JCL = "some jcl";
-	private static final String EXPECTED_ENCRYPTED_CSV_FILE_PATH = "/test/encrypted.csv";
-	private static final String EXPECTED_UNENCRYPTED_CSV_FILE_PATH = "/test/unencrypted.csv";
+	private static final String EXPECTED_ENCRYPTED_DATA_FILE = "/test/encrypted.csv";
+	private static final String EXPECTED_UNENCRYPTED_DATA_FILE = "/test/unencrypted.csv";
 
 	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
 	private static final String EXPECTED_ENCRYPTION_KEY_VALUE = "encryptionKeyValue";
@@ -87,13 +87,13 @@ public class ZAdviserDownloadDataTest {
 
 	@Test
 	public void testNullEncryptedCsvFilePath() {
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(null).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(null).kind);
 	}
 
 	@Test
 	public void testEmptyEncryptedCsvFilePath() {
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(StringUtils.EMPTY).kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(StringUtils.SPACE).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(StringUtils.SPACE).kind);
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class ZAdviserDownloadDataTest {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
 		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(EXPECTED_ENCRYPTION_KEY_VALUE));
 
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 	}
 
 	@Test
@@ -109,11 +109,11 @@ public class ZAdviserDownloadDataTest {
 		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(EXPECTED_ENCRYPTION_KEY_VALUE));
 
 		zAdviserGlobalConfig.setAccessKey(null);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 	}
 
 	@Test
@@ -121,27 +121,27 @@ public class ZAdviserDownloadDataTest {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
 
 		zAdviserGlobalConfig.setEncryptionKey(null);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(StringUtils.EMPTY));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 		zAdviserGlobalConfig.setEncryptionKey(Secret.fromString(StringUtils.SPACE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedCsvFilePath(EXPECTED_ENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckEncryptedDataFile(EXPECTED_ENCRYPTED_DATA_FILE).kind);
 	}
 
 	@Test
 	public void testNullUnencryptedCsvFilePath() {
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(null).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedDataFile(null).kind);
 	}
 
 	@Test
 	public void testEmptyUnencryptedCsvFilePath() {
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(StringUtils.EMPTY).kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedCsvFilePath(StringUtils.SPACE).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedDataFile(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUnencryptedDataFile(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidUnencryptedCsvFilePath() {
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUnencryptedCsvFilePath(EXPECTED_UNENCRYPTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUnencryptedDataFile(EXPECTED_UNENCRYPTED_DATA_FILE).kind);
 	}
 
 	@Test

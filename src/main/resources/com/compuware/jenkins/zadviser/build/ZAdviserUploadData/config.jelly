@@ -4,7 +4,7 @@
 		textbox.csvupdate { max-width: 33%; vertical-align:top; }
 		a.configure { padding: 0px 0px 0px 15px; }
 	</style>
-	<f:entry title="${%csvFilePath}" field="csvFilePath" help="/plugin/compuware-zadviser-api/help-csvFilePath.html">
+	<f:entry title="${%uploadDataFile}" field="uploadDataFile" help="/plugin/compuware-zadviser-api/help-uploadDataFile.html">
        	<f:textbox default=""/>
 	</f:entry>
 	<f:block>

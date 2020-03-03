@@ -16,10 +16,10 @@
  */
 package com.compuware.jenkins.zadviser.common.configuration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -38,8 +38,8 @@ import net.sf.json.JSONObject;
  * Class for testing the zAdviser global configuration.
  */
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("nls")
 public class ZAdviserGlobalConfigurationTest {
-
 	private static final String EXPECTED_ACCESS_KEY = "123foobar321";
 	private static final String EXPECTED_ENCRYPTION_KEY = "blahblah";
 	private static final String EXPECTED_INITIAL_DATE_RANGE = "1";
@@ -66,8 +66,8 @@ public class ZAdviserGlobalConfigurationTest {
 
     @Test
     public void testEmptyInitialDateRange() {
-        assertEquals(FormValidation.Kind.OK, globalConfig.doCheckInitialDateRange("").kind);
-        assertEquals(FormValidation.Kind.OK, globalConfig.doCheckInitialDateRange(" ").kind);
+		assertEquals(FormValidation.Kind.OK, globalConfig.doCheckInitialDateRange(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.OK, globalConfig.doCheckInitialDateRange(StringUtils.SPACE).kind);
     }
 
     @Test

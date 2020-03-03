@@ -9,11 +9,11 @@
      <f:entry title="${%jcl}" field="jcl" help="/plugin/compuware-zadviser-api/help-jcl.html">
         <f:textarea style="height:20em;" default="${descriptor.getDefaultJcl()}"/>
     </f:entry>
-    <f:entry title="${%unencryptedCsvFilePath}" field="unencryptedCsvFilePath" help="/plugin/compuware-zadviser-api/help-unencryptedCsvFilePath.html">
+    <f:entry title="${%unencryptedDataFile}" field="unencryptedDataFile" help="/plugin/compuware-zadviser-api/help-unencryptedDataFile.html">
       	<f:textbox default=""/>
     </f:entry>
 	<f:optionalBlock field="encryptData" title="${%encryptZAdviserData}" inline="true" checked="${instance.isEncryptData}" help="/plugin/compuware-zadviser-api/help-encryptData.html">
-		<f:entry title="${%encryptedCsvFilePath}" field="encryptedCsvFilePath" help="/plugin/compuware-zadviser-api/help-encryptedCsvFilePath.html">
+		<f:entry title="${%encryptedDataFile}" field="encryptedDataFile" help="/plugin/compuware-zadviser-api/help-encryptedDataFile.html">
     	   	<f:textbox default=""/>
 		</f:entry>
    	</f:optionalBlock>

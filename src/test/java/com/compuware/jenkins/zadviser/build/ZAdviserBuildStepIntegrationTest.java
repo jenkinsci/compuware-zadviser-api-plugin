@@ -16,51 +16,24 @@
  */
 package com.compuware.jenkins.zadviser.build;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jvnet.hudson.test.BuildWatcher;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.compuware.jenkins.common.configuration.CpwrGlobalConfiguration;
-import com.compuware.jenkins.common.utils.CLIVersionUtils;
-import com.compuware.jenkins.zadviser.common.configuration.ZAdviserGlobalConfiguration;
 
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Launcher.ProcStarter;
-import hudson.model.Cause;
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.util.Secret;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.mockito.Matchers.any;
 /**
  * Test cases for {@link ZAdviserDownloadData}, {@link ZAdviserUploadData} integration.
  */
@@ -73,9 +46,9 @@ public class ZAdviserBuildStepIntegrationTest {
 	private static final String EXPECTED_CONNECTION_ID = "12345";
 	private static final String EXPECTED_CREDENTIALS_ID = "67890";
 	private static final String EXPECTED_JCL = "some jcl";
-	private static final String EXPECTED_ENCRYPTED_CSV_FILE_PATH = "/test/encrypted.csv";
-	private static final String EXPECTED_UNENCRYPTED_CSV_FILE_PATH = "/test/unencrypted.csv";
-	private static final String EXPECTED_CSV_FILE_PATH = "/test/encrypted.csv";
+	private static final String EXPECTED_ENCRYPTED_DATA_FILE = "/test/encrypted.csv";
+	private static final String EXPECTED_UNENCRYPTED_DATA_FILE = "/test/unencrypted.csv";
+	private static final String EXPECTED_UPLOAD_DATA_FILE = "/test/encrypted.csv";
 	private static final String EXPECTED_HOST = "cw01";
 	private static final String EXPECTED_PORT = "30947";
 	private static final String EXPECTED_CES_URL = "https://expectedcesurl/";
@@ -141,11 +114,11 @@ public class ZAdviserBuildStepIntegrationTest {
 	@Test
 	public void testRoundTrip() throws Exception {
 		FreeStyleProject project = jenkinsRule.createFreeStyleProject("TestProject");
-		ZAdviserDownloadData beforeZAdviserCollectData = new ZAdviserDownloadData(EXPECTED_CONNECTION_ID, EXPECTED_CREDENTIALS_ID, EXPECTED_JCL,
-				EXPECTED_ENCRYPTED_CSV_FILE_PATH, EXPECTED_UNENCRYPTED_CSV_FILE_PATH);
+		ZAdviserDownloadData beforeZAdviserCollectData = new ZAdviserDownloadData(EXPECTED_CONNECTION_ID, EXPECTED_CREDENTIALS_ID,
+				EXPECTED_JCL, EXPECTED_ENCRYPTED_DATA_FILE, EXPECTED_UNENCRYPTED_DATA_FILE);
 		project.getBuildersList().add(beforeZAdviserCollectData);
 
-		ZAdviserUploadData beforeZAdviserUploadData = new ZAdviserUploadData(EXPECTED_CSV_FILE_PATH);
+		ZAdviserUploadData beforeZAdviserUploadData = new ZAdviserUploadData(EXPECTED_UPLOAD_DATA_FILE);
 		project.getBuildersList().add(beforeZAdviserUploadData);
 
 		project = jenkinsRule.configRoundtrip(project);
