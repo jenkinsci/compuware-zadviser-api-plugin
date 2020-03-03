@@ -42,15 +42,13 @@ public class ZAdviserUtilitiesConstants {
 	public static final String ENCRYPTION_KEY_PARM = "-encryptionKey";
 	public static final String INITIAL_DATE_RANGE_PARM = "-initialDateRange";
 
-	// Data collection step
+	// Data collection/upload steps
 	public static final String JCL_FILE_PATH_PARM = "-jclFilePath";
-	public static final String UNENCRYPTED_CSV_FILE_PATH_PARM = "-unencryptedCsvFilePath";
-	public static final String ENCRYPTED_CSV_FILE_PATH_PARM = "-encryptedCsvFilePath";
+	public static final String UNENCRYPTED_DATA_FILE_PARM = "-unencryptedDataFile";
+	public static final String ENCRYPTED_DATA_FILE_PARM = "-encryptedDataFile";
 	public static final String LAST_DATE_RUN_PARM = "-lastDateRun";
 	public static final String ZADVISER_LAST_RUN_FILE = "/zAdviserLastRun.properties";
-
-	// Data upload step
-	public static final String CSV_FILE_PATH_PARM = "-csvFilePath";
+	public static final String UPLOAD_DATA_FILE_PARM = "-uploadDataFile";
 
 	// Build steps
 	public static final String BUILD_STEP_PARAM = "-buildStep";

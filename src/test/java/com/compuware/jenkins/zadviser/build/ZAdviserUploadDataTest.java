@@ -40,7 +40,7 @@ import hudson.util.Secret;
 public class ZAdviserUploadDataTest {
 	// Builder expected values
 	/* @formatter:off */
-	private static final String EXPECTED_CSV_FILE_PATH = "/test/encrypted.csv";
+	private static final String EXPECTED_UPLOAD_DATA_FILE = "/test/encrypted.csv";
 	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
 	/* @formatter:on */
 
@@ -64,29 +64,29 @@ public class ZAdviserUploadDataTest {
 	@Test
 	public void testNullCsvFilePath() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(null).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(null).kind);
 	}
 
 	@Test
 	public void testEmptyCsvFilePath() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(StringUtils.EMPTY).kind);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(StringUtils.SPACE).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(StringUtils.EMPTY).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(StringUtils.SPACE).kind);
 	}
 
 	@Test
 	public void testValidCsvFilePath() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 	}
 
 	@Test
 	public void testValidCsvFilePathWithoutAccessKey() {
 		zAdviserGlobalConfig.setAccessKey(null);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckCsvFilePath(EXPECTED_CSV_FILE_PATH).kind);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 	}
 }
