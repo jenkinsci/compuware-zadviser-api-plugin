@@ -54,4 +54,6 @@ public class ZAdviserUtilitiesConstants {
 	public static final String BUILD_STEP_PARAM = "-buildStep";
 	public static final String DOWNLOAD_STEP = "D";
 	public static final String UPLOAD_STEP = "U";
+
+	public static final String PERSIST_DATA_PARM = "-persistData";
 }

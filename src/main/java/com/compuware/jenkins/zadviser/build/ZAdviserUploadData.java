@@ -237,6 +237,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		// create the CLI workspace (in case it doesn't already exist)
 		EnvVars env = run.getEnvironment(listener);
+		args.add(ZAdviserUtilitiesConstants.PERSIST_DATA_PARM, env.get("JENKINS_HOME"));
 		FilePath workDir = new FilePath(vChannel, workspace.getRemote());
 		workDir.mkdirs();
 
