@@ -562,6 +562,11 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 					args.add(ZAdviserUtilitiesConstants.ACCESS_KEY_PARM);
 					args.add(accessKey.getPlainText(), true);
 				}
+
+				String customerId = zAdviserGlobalConfiguration.getCustomerId();
+				if (StringUtils.isNotEmpty(customerId)) {
+					args.add(ZAdviserUtilitiesConstants.CUSTOMER_ID_PARM, customerId);
+				}
 			}
 
 			if (isEncryptData()) {
@@ -578,11 +583,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			}
 
 			if (isUploadData()) {
-				String customerId = zAdviserGlobalConfiguration.getCustomerId();
-				if (StringUtils.isNotEmpty(customerId)) {
-					args.add(ZAdviserUtilitiesConstants.CUSTOMER_ID_PARM, customerId);
-				}
-
 				String uploadDataFileStr;
 				if (isEncryptData()) {
 					uploadDataFileStr = getEncryptedDataFile();
