@@ -316,11 +316,16 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
 				if (accessKey == null) {
 					return FormValidation.error(Messages.checkMissingAccessKeyError());
-				} else {
-					Secret encryptionKey = zAdviserGlobalConfig.getEncryptionKey();
-					if (encryptionKey == null) {
-						return FormValidation.error(Messages.checkMissingEncryptionKeyError());
-					}
+				}
+
+				Secret encryptionKey = zAdviserGlobalConfig.getEncryptionKey();
+				if (encryptionKey == null) {
+					return FormValidation.error(Messages.checkMissingEncryptionKeyError());
+				}
+
+				String customerId = zAdviserGlobalConfig.getCustomerId();
+				if (StringUtils.isBlank(customerId)) {
+					return FormValidation.error(Messages.checkMissingCustomerIdError());
 				}
 			}
 
@@ -358,6 +363,11 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
 				if (accessKey == null) {
 					return FormValidation.error(Messages.checkMissingAccessKeyError());
+				}
+
+				String customerId = zAdviserGlobalConfig.getCustomerId();
+				if (StringUtils.isBlank(customerId)) {
+					return FormValidation.error(Messages.checkMissingCustomerIdError());
 				}
 			}
 

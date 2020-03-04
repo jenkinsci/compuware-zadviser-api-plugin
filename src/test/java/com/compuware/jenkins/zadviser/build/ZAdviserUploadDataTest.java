@@ -42,6 +42,7 @@ public class ZAdviserUploadDataTest {
 	/* @formatter:off */
 	private static final String EXPECTED_UPLOAD_DATA_FILE = "/test/encrypted.csv";
 	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
+	private static final String EXPECTED_CUSTOMER_ID_VALUE = "customerIdValue";
 	/* @formatter:on */
 
 	@ClassRule
@@ -62,31 +63,51 @@ public class ZAdviserUploadDataTest {
 	}
 
 	@Test
-	public void testNullCsvFilePath() {
+	public void testNullUploadDataFile() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
+
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(null).kind);
 	}
 
 	@Test
-	public void testEmptyCsvFilePath() {
+	public void testEmptyUploadDataFile() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
+
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(StringUtils.EMPTY).kind);
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(StringUtils.SPACE).kind);
 	}
 
 	@Test
-	public void testValidCsvFilePath() {
+	public void testValidUploadDataFile() {
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
+
 		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 	}
 
 	@Test
-	public void testValidCsvFilePathWithoutAccessKey() {
+	public void testValidUploadDataFileWithoutAccessKey() {
+		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
+
 		zAdviserGlobalConfig.setAccessKey(null);
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
+	}
+
+	@Test
+	public void testValidUploadDataFileWithoutCustomerId() {
+		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
+
+		zAdviserGlobalConfig.setCustomerId(null);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
+		zAdviserGlobalConfig.setCustomerId(StringUtils.EMPTY);
+		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
+		zAdviserGlobalConfig.setCustomerId(StringUtils.SPACE);
 		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadDataFile(EXPECTED_UPLOAD_DATA_FILE).kind);
 	}
 }

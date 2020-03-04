@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.compuware.jenkins</groupId>
       <artifactId>compuware-common-configuration</artifactId>
-      <version>1.0.9</version>
+      <version>1.0.10-SNAPSHOT</version>
     </dependency>
     <dependency>
    	  <groupId>org.apache.commons</groupId>
