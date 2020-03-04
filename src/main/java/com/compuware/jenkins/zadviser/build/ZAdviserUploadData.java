@@ -158,6 +158,11 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 				if (accessKey == null || StringUtils.isBlank(accessKey.getPlainText())) {
 					return FormValidation.error(Messages.checkMissingAccessKeyError());
 				}
+
+				String customerId = zAdviserGlobalConfig.getCustomerId();
+				if (StringUtils.isBlank(customerId)) {
+					return FormValidation.error(Messages.checkMissingCustomerIdError());
+				}
 			}
 
 			return FormValidation.ok();
