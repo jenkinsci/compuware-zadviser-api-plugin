@@ -556,11 +556,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_DATA_FILE_PARM, ArgumentUtils.escapeForScript(unencryptedDataFileStr));
 			}
 
-			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
 			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
-			if (lastExecutionTime != null) {
-				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
-			} else if (StringUtils.isNotBlank(initialDateRangeStr)) {
+			if (StringUtils.isNotBlank(initialDateRangeStr)) {
 				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
 			}
 
@@ -619,9 +616,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 				FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 				topazDataDir.deleteRecursive();
-
-				zAdviserGlobalConfiguration.updateLastExecutionTime(host, System.currentTimeMillis());
-				zAdviserGlobalConfiguration.save();
 			}
 		} finally {
 			cleanUp();

@@ -16,7 +16,6 @@
  */
 package com.compuware.jenkins.zadviser.common.configuration;
 
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +44,6 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	private String customerId;
 	private Secret encryptionKey;
 	private String initialDateRange;
-	private Properties lastExecutionTimes = new Properties();
 
 	// Used to indicate if the configuration needs saving; used only in the context of migration.
 	protected transient boolean needsSaving = false;
@@ -180,15 +178,6 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 	}
 
 	/**
-	 * Returns the value of the lastExecutionTimes attribute. Used for dataabinding.
-	 *
-	 * @return the value of the lastExecutionTimes attribute
-	 */
-	public Properties getLastExecutionTimes() {
-		return lastExecutionTimes;
-	}
-
-	/**
 	 * Validation for the initial date range text field.
 	 *
 	 * @param value
@@ -206,27 +195,6 @@ public class ZAdviserGlobalConfiguration extends GlobalConfiguration {
 		}
 
 		return FormValidation.ok();
-	}
-
-	/**
-	 * Returns the last execution time for the given host.
-	 *
-	 * @param host the host
-	 *
-	 * @return the last execution time; can be null
-	 */
-	public String getLastExecutionTime(String host) {
-		return lastExecutionTimes.getProperty(host);
-	}
-
-	/**
-	 * Sets the last execution time for the given host.
-	 *
-	 * @param host the host
-	 * @param lastExecutionTime the current time in milliseconds
-	 */
-	public void updateLastExecutionTime(String host, long lastExecutionTime) {
-		lastExecutionTimes.put(host, Long.toString(lastExecutionTime));
 	}
 
 	/**

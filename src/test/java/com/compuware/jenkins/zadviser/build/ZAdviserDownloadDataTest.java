@@ -1,14 +1,14 @@
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2020 Compuware Corporation
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice
  * shall be included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
@@ -16,7 +16,10 @@
  */
 package com.compuware.jenkins.zadviser.build;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +35,6 @@ import com.compuware.jenkins.zadviser.common.configuration.ZAdviserGlobalConfigu
 
 import hudson.util.FormValidation;
 import hudson.util.Secret;
-import net.sf.json.JSONObject;
 
 /**
  * Test cases for {@link ZAdviserDownloadData}.
@@ -48,9 +50,6 @@ public class ZAdviserDownloadDataTest {
 	private static final String EXPECTED_ACCESS_KEY_VALUE = "accessKeyValue";
 	private static final String EXPECTED_ENCRYPTION_KEY_VALUE = "encryptionKeyValue";
 	private static final String EXPECTED_CUSTOMER_ID_VALUE = "customerIdValue";
-
-	private static final String CW01 = "cw01";
-	private static final String CW02 = "cw02";
 	/* @formatter:on */
 
 	@ClassRule
@@ -161,36 +160,6 @@ public class ZAdviserDownloadDataTest {
 	@Test
 	public void testValidDefaultJcl() {
 		assertTrue(descriptor.getDefaultJcl().contains("//ZADVISER JOB"));
-	}
-
-	@Test
-	public void testLastExecutionTimeSingleHost() {
-		long lastExecutionTimeCw01 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
-		zAdviserGlobalConfig.configure(request, new JSONObject());
-		zAdviserGlobalConfig.load();
-		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime("cw01"));
-		
-		lastExecutionTimeCw01 = 1L;
-		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
-		zAdviserGlobalConfig.configure(request, new JSONObject());
-		zAdviserGlobalConfig.load();
-		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime("cw01"));
-	}
-
-	@Test
-	public void testLastExecutionTimeMultipleHosts() {
-		long lastExecutionTimeCw01 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime(CW01, lastExecutionTimeCw01);
-		zAdviserGlobalConfig.configure(request, new JSONObject());
-		
-		long lastExecutionTimeCw02 = System.currentTimeMillis();
-		zAdviserGlobalConfig.updateLastExecutionTime(CW02, lastExecutionTimeCw02);
-		zAdviserGlobalConfig.configure(request, new JSONObject());
-
-		zAdviserGlobalConfig.load();
-		assertEquals(Long.toString(lastExecutionTimeCw01), zAdviserGlobalConfig.getLastExecutionTime(CW01));
-		assertEquals(Long.toString(lastExecutionTimeCw02), zAdviserGlobalConfig.getLastExecutionTime(CW02));
 	}
 
 	@Test
