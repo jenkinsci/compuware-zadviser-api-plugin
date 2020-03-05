@@ -118,7 +118,7 @@ public class ZAdviserBuildStepIntegrationTest {
 				EXPECTED_JCL, EXPECTED_ENCRYPTED_DATA_FILE, EXPECTED_UNENCRYPTED_DATA_FILE);
 		project.getBuildersList().add(beforeZAdviserCollectData);
 
-		ZAdviserUploadData beforeZAdviserUploadData = new ZAdviserUploadData(EXPECTED_UPLOAD_DATA_FILE);
+		ZAdviserUploadData beforeZAdviserUploadData = new ZAdviserUploadData(EXPECTED_CONNECTION_ID, EXPECTED_UPLOAD_DATA_FILE);
 		project.getBuildersList().add(beforeZAdviserUploadData);
 
 		project = jenkinsRule.configRoundtrip(project);

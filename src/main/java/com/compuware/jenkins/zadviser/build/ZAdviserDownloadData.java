@@ -556,11 +556,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				args.add(ZAdviserUtilitiesConstants.UNENCRYPTED_DATA_FILE_PARM, ArgumentUtils.escapeForScript(unencryptedDataFileStr));
 			}
 
-			String lastExecutionTime = zAdviserGlobalConfiguration.getLastExecutionTime(host);
 			String initialDateRangeStr = zAdviserGlobalConfiguration.getInitialDateRange();
-			if (lastExecutionTime != null) {
-				args.add(ZAdviserUtilitiesConstants.LAST_DATE_RUN_PARM, lastExecutionTime);
-			} else if (StringUtils.isNotBlank(initialDateRangeStr)) {
+			if (StringUtils.isNotBlank(initialDateRangeStr)) {
 				args.add(ZAdviserUtilitiesConstants.INITIAL_DATE_RANGE_PARM, initialDateRangeStr);
 			}
 
@@ -607,6 +604,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			// create the CLI workspace (in case it doesn't already exist)
 			EnvVars env = run.getEnvironment(listener);
+			args.add(ZAdviserUtilitiesConstants.PERSIST_DATA_PARM, ArgumentUtils.escapeForScript(env.get("JENKINS_HOME"))); //$NON-NLS-1$
 			FilePath workDir = new FilePath(vChannel, workspace.getRemote());
 			workDir.mkdirs();
 
@@ -618,83 +616,11 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 				logger.println("Call " + osFile + " exited with value = " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 				FilePath topazDataDir = new FilePath(vChannel, topazCliWorkspace);
 				topazDataDir.deleteRecursive();
-
-				zAdviserGlobalConfiguration.updateLastExecutionTime(host, System.currentTimeMillis());
-				zAdviserGlobalConfiguration.save();
 			}
 		} finally {
 			cleanUp();
 		}
 	}
-
-// TODO: Keep code until last execution time storage is decided upon
-//
-//	/**
-//	 * Get the last execution time for the specified host.
-//	 *
-//	 * @param host the host
-//	 * @param run the run
-//	 * @param listener the job listener
-//	 *
-//	 * @return last execution time; can be null
-//	 */
-//	protected String getLastExecutionTimeForHost(String host, Run<?, ?> run, TaskListener listener) {
-//		String lastExecutionTime = null;
-//		PrintStream logger = listener.getLogger();
-//
-//		try {
-//			EnvVars env = run.getEnvironment(listener);
-//			String jenkinsHome = env.get("JENKINS_HOME");
-//			File cfgFile = new File(jenkinsHome + ZAdviserUtilitiesConstants.ZADVISER_LAST_RUN_FILE);
-//			if (cfgFile.exists()) {
-//				Properties props = new Properties();
-//				FilePath cfgFilePath = new FilePath(cfgFile);
-//				props.load(cfgFilePath.read());
-//
-//				lastExecutionTime = props.getProperty(host);
-//			}
-//		} catch (InterruptedException | IOException e) {
-//			logger.println("An error occurred attempting to get the last execution time for host '" + host + "'. " + e.getMessage());
-//		}
-//
-//		return lastExecutionTime;
-//	}
-//
-//	/**
-//	 * Update the last execution time for the specified host.
-//	 *
-//	 * @param host the host
-//	 * @param run the run
-//	 * @param listener the job listener
-//	 */
-//	@SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "createNewFile either creates the file or not if already exists")
-//	protected void updateLastExecutionForHost(String host, Run<?, ?> run, TaskListener listener) {
-//		PrintStream logger = listener.getLogger();
-//
-//		try {
-//			EnvVars env = run.getEnvironment(listener);
-//			String jenkinsHome = env.get("JENKINS_HOME");
-//			File cfgFile = new File(jenkinsHome + ZAdviserUtilitiesConstants.ZADVISER_LAST_RUN_FILE);
-//
-//			cfgFile.createNewFile();
-//
-//			Properties props = new Properties();
-//			FilePath cfgFilePath = new FilePath(cfgFile);
-//			props.load(cfgFilePath.read());
-//
-//			props.setProperty(host, Long.toString(System.currentTimeMillis()));
-//
-//			FileOutputStream fos = new FileOutputStream(cfgFile);
-//			FileLock fLock = fos.getChannel().lock();
-//			try {
-//				props.store(fos, null);
-//			} finally {
-//				fLock.release();
-//			}
-//		} catch (InterruptedException | IOException | SecurityException e) {
-//			logger.println("An error occurred attempting to update the last execution time for host '" + host + "'. " + e.getMessage());
-//		}
-//	}
 
 	/**
 	 * Handle clean up when finished builder execution.
