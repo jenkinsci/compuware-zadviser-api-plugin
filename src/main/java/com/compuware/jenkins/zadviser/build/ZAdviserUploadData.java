@@ -23,11 +23,13 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.compuware.jenkins.common.configuration.CpwrGlobalConfiguration;
+import com.compuware.jenkins.common.configuration.HostConnection;
 import com.compuware.jenkins.common.utils.ArgumentUtils;
 import com.compuware.jenkins.common.utils.CLIVersionUtils;
 import com.compuware.jenkins.common.utils.CommonConstants;
@@ -41,6 +43,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
@@ -48,7 +51,10 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import hudson.util.Secret;
+import hudson.util.ListBoxModel.Option;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
@@ -57,17 +63,30 @@ import net.sf.json.JSONObject;
  */
 public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 	// Member Variables
+	private String connectionId;
 	private String uploadDataFile;
 
 	/**
 	 * Constructor.
 	 *
+	 * @param connectionId
+	 *            a unique host connection identifier
 	 * @param uploadDataFile
 	 *            the data file to upload
 	 */
 	@DataBoundConstructor
-	public ZAdviserUploadData(String uploadDataFile) {
+	public ZAdviserUploadData(String connectionId, String uploadDataFile) {
+		this.connectionId = StringUtils.trimToEmpty(connectionId);
 		this.uploadDataFile = StringUtils.trimToEmpty(uploadDataFile);
+	}
+
+	/**
+	 * Gets the value of the connectionId attribute.
+	 *
+	 * @return <code>String</code> value of connectionId
+	 */
+	public String getConnectionId() {
+		return connectionId;
 	}
 
 	/**
@@ -139,6 +158,22 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		}
 
 		/**
+		 * Validator for the 'Host connection' field.
+		 *
+		 * @param connectionId
+		 *            unique identifier for the host connection passed from the config.jelly "connectionId" field
+		 *
+		 * @return validation message
+		 */
+		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
+			if (StringUtils.isBlank(connectionId)) {
+				return FormValidation.error(Messages.checkHostConnectionError());
+			}
+
+			return FormValidation.ok();
+		}
+
+		/**
 		 * Validator for the 'Upload Data File' field.
 		 * <p>
 		 * If a valid data file exists, then the access key will be validated for existence.
@@ -177,6 +212,39 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		public String getDisplayName() {
 			return Messages.zAdviserUploadDataDescriptorDisplayName();
 		}
+
+		/**
+		 * Fills in the Host Connection selection box with applicable connections.
+		 *
+		 * @param context
+		 *            filter for host connections
+		 * @param connectionId
+		 *            an existing host connection identifier; can be null
+		 * @param project
+		 *            the Jenkins project
+		 *
+		 * @return host connection selections
+		 */
+		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
+				@AncestorInPath Item project) {
+			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();
+			HostConnection[] hostConnections = globalConfig.getHostConnections();
+
+			ListBoxModel model = new ListBoxModel();
+			model.add(new Option(StringUtils.EMPTY, StringUtils.EMPTY, false));
+
+			for (HostConnection connection : hostConnections) {
+				boolean isSelected = false;
+				if (connectionId != null) {
+					isSelected = connectionId.matches(connection.getConnectionId());
+				}
+
+				model.add(new Option(connection.getDescription() + " [" + connection.getHostPort() + ']', //$NON-NLS-1$
+						connection.getConnectionId(), isSelected));
+			}
+
+			return model;
+		}
 	}
 
 	/*
@@ -211,6 +279,11 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		logger.println("cliScriptFileRemote: " + cliScriptFileRemote); //$NON-NLS-1$
 		args.add(cliScriptFileRemote);
 
+		// Get host configuration
+		HostConnection connection = globalConfig.getHostConnection(getConnectionId());
+		String host = ArgumentUtils.escapeForScript(connection.getHost());
+		args.add(CommonConstants.HOST_PARM, host);
+
 		// Get workspace configuration
 		String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
 				+ UUID.randomUUID().toString();
@@ -237,7 +310,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 
 		// create the CLI workspace (in case it doesn't already exist)
 		EnvVars env = run.getEnvironment(listener);
-		args.add(ZAdviserUtilitiesConstants.PERSIST_DATA_PARM, env.get("JENKINS_HOME"));
+		args.add(ZAdviserUtilitiesConstants.PERSIST_DATA_PARM, env.get("JENKINS_HOME")); //$NON-NLS-1$
 		FilePath workDir = new FilePath(vChannel, workspace.getRemote());
 		workDir.mkdirs();
 

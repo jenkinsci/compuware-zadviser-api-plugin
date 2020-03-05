@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:c="/lib/credentials" xmlns:cc="/lib/compuware">
-    <f:entry title="${%hostConnection}" field="connectionId" help="/plugin//compuware-zadviser-api/help-connectionId.html">
+    <f:entry title="${%hostConnection}" field="connectionId" help="/plugin//compuware-zadviser-api/help-connectionIdDownload.html">
         <cc:hostSelect default=""/>
     </f:entry>
     <f:entry title="${%loginCredentials}" field="credentialsId" help="/plugin//compuware-zadviser-api/help-credentialsId.html">

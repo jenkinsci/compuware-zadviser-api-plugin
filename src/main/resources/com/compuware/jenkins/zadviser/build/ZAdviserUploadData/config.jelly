@@ -1,9 +1,12 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:cc="/lib/compuware">
 	<style type="text/css">
 		textbox.csvupdate { max-width: 33%; vertical-align:top; }
 		a.configure { padding: 0px 0px 0px 15px; }
 	</style>
+	<f:entry title="${%hostConnection}" field="connectionId" help="/plugin//compuware-zadviser-api/help-connectionIdUpload.html">
+        <cc:hostSelect default=""/>
+    </f:entry>
 	<f:entry title="${%uploadDataFile}" field="uploadDataFile" help="/plugin/compuware-zadviser-api/help-uploadDataFile.html">
        	<f:textbox default=""/>
 	</f:entry>
