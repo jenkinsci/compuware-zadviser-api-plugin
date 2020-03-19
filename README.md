@@ -104,8 +104,7 @@ Configurations section.
     location of the CLI. If necessary, change the default values given
     to match the correct installation location.
 
-**![](docs/images/info.svg) **The Topaz Workbench CLI must be installed on
-the machine that is configured to run the job.
+![](docs/images/info.svg) The Topaz Workbench CLI must be installed on the machine that is configured to run the job.
 
 **Host connections**
 
@@ -171,9 +170,7 @@ This integration allows downloading of zAdviser data from a specific
 host with option to encrypt the data before optionally uploading to
 Compuware for hosting in Kibana.
 
-1.  On the **Configuration **page of the job or project, in
-    the **Build **section, from the **Add build step** list, select
-    **zAdviser download data and optionally upload to Compuware**.
+On the **Configuration **page of the job or project, in the **Build **section, from the **Add build step** list, select **zAdviser download data and optionally upload to Compuware**.
 
 This build action has following
 parameters:
@@ -273,9 +270,7 @@ to Compuware for hosting in Kibana.
 **zAdviser download data and optionally upload to Compuware **build step
 having the same host.
 
-1.  On the **Configuration **page of the job or project, in
-    the **Build **section, from the **Add build step** list, select
-    **zAdviser upload to Compuware**.
+On the **Configuration **page of the job or project, in the **Build **section, from the **Add build step** list, select **zAdviser upload to Compuware**.
 
 This build action has following
 parameters:
@@ -351,7 +346,7 @@ node {
 Compuware provides assistance for customers with its documentation, the
 Compuware Support Center web site, and telephone customer support.
 
-Compuware Support Center
+### Compuware Support Center
 
 You can access online information for Compuware products via our Support
 Center site at
@@ -362,7 +357,7 @@ documentation, access product fixes, or e-mail your questions or
 comments. The first time you access Support Center, you must register
 and obtain a password. Registration is free.
 
-Contacting Customer Support
+### Contacting Customer Support
 
 At Compuware, we strive to make our products and documentation the best
 in the industry. Feedback from our customers helps us maintain our
@@ -406,7 +401,7 @@ Center: [https://support.compuware.com](https://support.compuware.com/).
 
 Note: Please report all high-priority issues by phone.
 
-Corporate Web Site
+### Corporate Web Site
 
 To access Compuware\'s site on the Web, go
 to [https://www.compuware.com](https://www.compuware.com/). The
