@@ -36,7 +36,7 @@ The following are required to use this plugin:
 
 ## Configuring for Topaz Workbench CLI & Host Connections
 
-In order to access zAdviser data you will need to point to an installed Topaz Workbench Command Line Interface (CLI). The Topaz Workbench CLI will work with host connection(s) you also need to configure to download zAdviser data, encrypt the data, and upload to Compuware where the data will be hosted in Kibana.
+In order to access zAdviser data you will need to point to an installed Topaz Workbench Command Line Interface (CLI). The Topaz Workbench CLI will work with host connection(s) you also need to configure to download zAdviser data, encrypt the data and upload to Compuware.
 
 Navigate to Manage Jenkins / Configure System and go to Compuware Configurations section.
 
@@ -66,7 +66,7 @@ Navigate to Manage Jenkins / Configure System and go to Compuware Configurations
 
 ## zAdviser API Configuration
 
-In order to download zAdviser data, encrypt and upload to Compuware for hosting in Kibana, a customer access key and id must be provided. An encryption key is also required if encrypting data prior to upload.
+In order to download zAdviser data, encrypt and upload to Compuware, a customer access key and id must be provided. An encryption key is also required if encrypting data prior to upload.
 
 Navigate to Manage Jenkins / Configure System and go to zAdviser API Configuration section.
 
@@ -85,7 +85,7 @@ From a Freestyle Project navigate to Configure and go to Build section, click Ad
 
 ### Download zAdviser data and optionally upload to Compuware
 
-This integration allows downloading of zAdviser data from a specific host with option to encrypt the data before optionally uploading to Compuware for hosting in Kibana.
+This integration allows downloading of zAdviser data from a specific host with option to encrypt the data before optionally uploading to Compuware.
 
 On the **Configuration** page of the job or project, in the **Build** section, from the **Add build step** list, select **zAdviser download data and optionally upload to Compuware**.
 
@@ -155,7 +155,7 @@ node {
 
 ### Upload zAdviser data to Compuware
 
-This integration allows uploading of zAdviser data for a specific host to Compuware for hosting in Kibana.
+This integration allows uploading of zAdviser data for a specific host to Compuware.
 
 ![](docs/images/info.svg) This build step should be paired with a **zAdviser download data and optionally upload to Compuware** build step having the same host.
 
