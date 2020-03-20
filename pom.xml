@@ -21,7 +21,7 @@
   </properties>
 
   <name>Compuware zAdviser API</name>
-  <description>This plugin downloads, encrypts, and uploads zAdviser data.</description>
+  <description>Extracts, downloads, encrypts, and uploads zAdviser data.</description>
   <url>https://github.com/jenkinsci/compuware-zadviser-api-plugin</url>
   <licenses>
     <license>
@@ -29,6 +29,14 @@
       <url>http://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
+
+  <developers>
+    <developer>
+      <id>cpwr_jenkins</id>
+      <name>Steve Kansa</name>
+      <email>steve.kansa@compuware.com</email>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
