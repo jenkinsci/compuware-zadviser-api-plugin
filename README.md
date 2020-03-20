@@ -2,7 +2,7 @@
 
 ![](docs/images/compuware.zadviser.png)
 
-![Jenkins Plugin](https://github.com/Compuware-Corp/compuware-zadviser-api-plugin/compuware-zadviser-api) ![GitHub release](https://github.com/jenkinsci/compuware-topaz-for-total-test-plugin/releases/latest) ![Jenkins Plugin Installs](https://plugins.jenkins.io/compuware-zadviser-api)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/compuware-zadviser-api.svg)](https://plugins.jenkins.io/compuware-zadviser-api) [![GitHub release](https://img.shields.io/github/v/release/jenkinsci/compuware-zadviser-api-plugin.svg?label=release)](https://github.com/jenkinsci/compuware-zadviser-api-plugin/releases/latest) [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/compuware-zadviser-api.svg?color=blue)](https://plugins.jenkins.io/compuware-zadviser-api)
 
 ## Overview
 
