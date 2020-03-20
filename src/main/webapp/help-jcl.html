@@ -1,14 +1,15 @@
 <div>
 The purpose of the JCL is to:
+<li>Delete any datasets previously created by the job.</li>
 <li>Dump the zAdviser SMF records to a temporary dataset from either an SMF dataset or an SMF logstream.</li>
-<li>Create a csv file from the temporary dataset created in step one.</li>
+<li>Create a csv file formatted from the temporary dataset created in step one.</li>
 
 The following rules apply to the JCL modifications you may make.
 
-<li>If using IFASMFDL specify a logstream name</li>
-<li>If using IFASMFDP specify an input dataset</li>
-<li>DATE parameter is overridden by Jenkins parameter {zzzz} if it is specified.</li>
-<li>TYPE must specify the Compuware zAdviser SMF record type, per the SMF_ID parameter</li>
+<li>If using IFASMFDL specify a logstream name.</li>
+<li>If using IFASMFDP specify an input dataset.</li>
+<li>The DATE operand is overridden by Jenkins parameter {zzzz} if it is specified.</li>
+<li>TYPE must specify the Compuware zAdviser SMF record type, per the SMF_ID parameter. The default is 241.</li>
 <li>The OUTDD parameter must be a temporary dataset that is passed to the ROICOPY step.</li>
 <li>The //CSVOUT DD DCB attributes must not be changed.</li>
 <li>If your ECC libraries are not in the LNKLIST, specify the SLCXLOAD and SLCXAUTH libraries on the //STEPLIB.</li>
@@ -25,6 +26,10 @@ The following rules apply to the JCL modifications you may make.
 //*
 //*  DUMP ZADVISER SMF RECORDS (NON-LOGSTREAM)
 //*
+//DELETE   EXEC PGM=IEFBR14
+//DD01     DD DISP=(MOD,DELETE,DELETE),
+//            UNIT=SYSDA,SPACE=(TRK,(1,1)),
+//            DSN=CSV.OUTPUT.DATASET
 //STEP1    EXEC PGM=IFASMFDP
 //SMFIN    DD  DISP=SHR,DSN=MIS.SMF.CW01.DAILY
 //OUTDD1   DD  DISP=(,PASS),DSN=&&SMFOUT,
