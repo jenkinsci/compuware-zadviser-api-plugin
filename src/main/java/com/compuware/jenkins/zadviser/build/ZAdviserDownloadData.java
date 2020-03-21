@@ -487,6 +487,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			// obtain argument values to pass to the CLI
 			PrintStream logger = listener.getLogger();
 			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();
+
+			assert launcher != null;
 			VirtualChannel vChannel = launcher.getChannel();
 
 			// Check CLI compatibility
@@ -496,6 +498,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 
 			ArgumentListBuilder args = new ArgumentListBuilder();
 
+			assert vChannel != null;
 			Properties remoteProperties = vChannel.call(new RemoteSystemProperties());
 			String remoteFileSeparator = remoteProperties.getProperty(CommonConstants.FILE_SEPARATOR_PROPERTY_KEY);
 			boolean isShell = launcher.isUnix();
