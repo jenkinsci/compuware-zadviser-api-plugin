@@ -363,7 +363,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
-		@POST
 		public FormValidation doCheckUploadData(@QueryParameter Boolean uploadData) {
 			if (uploadData != null && uploadData.booleanValue()) {
 				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
