@@ -27,6 +27,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.GET;
+import org.kohsuke.stapler.verb.POST;
 
 import com.compuware.jenkins.common.configuration.CpwrGlobalConfiguration;
 import com.compuware.jenkins.common.configuration.HostConnection;
@@ -165,6 +167,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@GET
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
 			if (StringUtils.isBlank(connectionId)) {
 				return FormValidation.error(Messages.checkHostConnectionError());
@@ -183,6 +186,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckUploadDataFile(@QueryParameter String uploadDataFile) {
 			if (StringUtils.isBlank(uploadDataFile)) {
 				return FormValidation.error(Messages.checkUploadDataFileError());
@@ -225,6 +229,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return host connection selections
 		 */
+		@POST
 		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
 				@AncestorInPath Item project) {
 			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();

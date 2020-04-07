@@ -32,6 +32,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.verb.GET;
+import org.kohsuke.stapler.verb.POST;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
@@ -259,6 +261,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@GET
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
 			if (StringUtils.isBlank(connectionId)) {
 				return FormValidation.error(Messages.checkHostConnectionError());
@@ -275,6 +278,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckCredentialsId(@QueryParameter String credentialsId) {
 			if (StringUtils.isBlank(credentialsId)) {
 				return FormValidation.error(Messages.checkLoginCredentialsError());
@@ -291,6 +295,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckJcl(@QueryParameter String jcl) {
 			if (StringUtils.isBlank(jcl)) {
 				return FormValidation.error(Messages.checkJclError());
@@ -307,6 +312,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckEncryptedDataFile(@QueryParameter String encryptedDataFile) {
 			if (StringUtils.isBlank(encryptedDataFile)) {
 				return FormValidation.error(Messages.checkEncryptedDataFileError());
@@ -340,6 +346,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckUnencryptedDataFile(@QueryParameter String unencryptedDataFile) {
 			if (StringUtils.isBlank(unencryptedDataFile)) {
 				return FormValidation.error(Messages.checkUnencryptedDataFileError());
@@ -356,6 +363,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
+		@POST
 		public FormValidation doCheckUploadData(@QueryParameter Boolean uploadData) {
 			if (uploadData != null && uploadData.booleanValue()) {
 				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
@@ -386,6 +394,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return host connection selections
 		 */
+		@POST
 		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
 				@AncestorInPath Item project) {
 			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();
@@ -419,6 +428,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return login credentials selection
 		 */
+		@POST
 		public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Jenkins context, @QueryParameter String credentialsId,
 				@AncestorInPath Item project) {
 			List<StandardUsernamePasswordCredentials> creds = CredentialsProvider.lookupCredentials(
