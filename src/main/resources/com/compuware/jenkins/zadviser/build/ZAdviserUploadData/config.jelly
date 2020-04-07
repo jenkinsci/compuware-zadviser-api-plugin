@@ -8,7 +8,7 @@
         <cc:hostSelect default=""/>
     </f:entry>
 	<f:entry title="${%uploadDataFile}" field="uploadDataFile" help="/plugin/compuware-zadviser-api/help-uploadDataFile.html">
-       	<f:textbox default=""/>
+       	<f:textbox checkMethod="post" default=""/>
 	</f:entry>
 	<f:block>
  		<a href="${rootURL}/configure#zadviser-access-key">${%manageLink}</a>
