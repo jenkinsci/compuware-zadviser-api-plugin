@@ -263,6 +263,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		@GET
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(connectionId)) {
 				return FormValidation.error(Messages.checkHostConnectionError());
 			}
@@ -280,6 +281,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		@POST
 		public FormValidation doCheckCredentialsId(@QueryParameter String credentialsId) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(credentialsId)) {
 				return FormValidation.error(Messages.checkLoginCredentialsError());
 			}
@@ -297,6 +299,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		@POST
 		public FormValidation doCheckJcl(@QueryParameter String jcl) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(jcl)) {
 				return FormValidation.error(Messages.checkJclError());
 			}
@@ -314,6 +317,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		@POST
 		public FormValidation doCheckEncryptedDataFile(@QueryParameter String encryptedDataFile) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(encryptedDataFile)) {
 				return FormValidation.error(Messages.checkEncryptedDataFileError());
 			} else {
@@ -348,34 +352,9 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 */
 		@POST
 		public FormValidation doCheckUnencryptedDataFile(@QueryParameter String unencryptedDataFile) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(unencryptedDataFile)) {
 				return FormValidation.error(Messages.checkUnencryptedDataFileError());
-			}
-
-			return FormValidation.ok();
-		}
-
-		/**
-		 * Validator for the 'Upload Data' field.
-		 *
-		 * @param uploadData
-		 *            the upload data flag passed from the config.jelly "uploadData" field
-		 *
-		 * @return validation message
-		 */
-		public FormValidation doCheckUploadData(@QueryParameter Boolean uploadData) {
-			if (uploadData != null && uploadData.booleanValue()) {
-				ZAdviserGlobalConfiguration zAdviserGlobalConfig = ZAdviserGlobalConfiguration.get();
-
-				Secret accessKey = zAdviserGlobalConfig.getAccessKey();
-				if (accessKey == null) {
-					return FormValidation.error(Messages.checkMissingAccessKeyError());
-				}
-
-				String customerId = zAdviserGlobalConfig.getCustomerId();
-				if (StringUtils.isBlank(customerId)) {
-					return FormValidation.error(Messages.checkMissingCustomerIdError());
-				}
 			}
 
 			return FormValidation.ok();
@@ -396,6 +375,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		@POST
 		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
 				@AncestorInPath Item project) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();
 			HostConnection[] hostConnections = globalConfig.getHostConnections();
 
@@ -430,6 +410,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		@POST
 		public ListBoxModel doFillCredentialsIdItems(@AncestorInPath Jenkins context, @QueryParameter String credentialsId,
 				@AncestorInPath Item project) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			List<StandardUsernamePasswordCredentials> creds = CredentialsProvider.lookupCredentials(
 					StandardUsernamePasswordCredentials.class, project, ACL.SYSTEM, Collections.<DomainRequirement>emptyList());
 

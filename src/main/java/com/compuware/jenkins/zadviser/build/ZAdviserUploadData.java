@@ -169,6 +169,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 */
 		@GET
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(connectionId)) {
 				return FormValidation.error(Messages.checkHostConnectionError());
 			}
@@ -188,6 +189,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		 */
 		@POST
 		public FormValidation doCheckUploadDataFile(@QueryParameter String uploadDataFile) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(uploadDataFile)) {
 				return FormValidation.error(Messages.checkUploadDataFileError());
 			} else {
@@ -232,6 +234,7 @@ public class ZAdviserUploadData extends Builder implements SimpleBuildStep {
 		@POST
 		public ListBoxModel doFillConnectionIdItems(@AncestorInPath Jenkins context, @QueryParameter String connectionId,
 				@AncestorInPath Item project) {
+			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			CpwrGlobalConfiguration globalConfig = CpwrGlobalConfiguration.get();
 			HostConnection[] hostConnections = globalConfig.getHostConnections();
 
