@@ -15,7 +15,6 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
     <jenkins.version>2.176</jenkins.version>
     <java.level>8</java.level>
 	<powermock.version>1.6.3</powermock.version>
@@ -24,6 +23,7 @@
   <name>Compuware zAdviser API</name>
   <description>Extracts, downloads, encrypts, and uploads zAdviser data.</description>
   <url>https://github.com/jenkinsci/compuware-zadviser-api-plugin</url>
+
   <licenses>
     <license>
       <name>MIT License</name>
@@ -33,9 +33,14 @@
 
   <developers>
     <developer>
-      <id>cpwr_jenkins</id>
-      <name>Steve Kansa</name>
-      <email>steve.kansa@compuware.com</email>
+      <id>jgoering41</id>
+      <name>Jon Goering</name>
+      <email>jon.goering@compuware.com</email>
+    </developer>
+    <developer>
+      <id>derek-rea</id>
+      <name>Derek Rea</name>
+      <email>derek.rea@compuware.com</email>
     </developer>
   </developers>
 
@@ -43,7 +48,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>zadviser-api-1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>

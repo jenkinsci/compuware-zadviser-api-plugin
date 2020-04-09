@@ -161,46 +161,4 @@ public class ZAdviserDownloadDataTest {
 	public void testValidDefaultJcl() {
 		assertTrue(descriptor.getDefaultJcl().contains("//ZADVISER JOB"));
 	}
-
-	@Test
-	public void testValidUploadData() {
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
-		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-	}
-
-	@Test
-	public void testUploadDataWithoutAccessKey() {
-		zAdviserGlobalConfig.setCustomerId(EXPECTED_CUSTOMER_ID_VALUE);
-
-		zAdviserGlobalConfig.setAccessKey(null);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.EMPTY));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString(StringUtils.SPACE));
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-	}
-
-	@Test
-	public void testUploadDataWithoutCustomerId() {
-		zAdviserGlobalConfig.setAccessKey(Secret.fromString(EXPECTED_ACCESS_KEY_VALUE));
-
-		zAdviserGlobalConfig.setCustomerId(null);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-
-		zAdviserGlobalConfig.setCustomerId(StringUtils.EMPTY);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-
-		zAdviserGlobalConfig.setCustomerId(StringUtils.SPACE);
-		assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckUploadData(Boolean.TRUE).kind);
-		assertEquals(FormValidation.Kind.OK, descriptor.doCheckUploadData(Boolean.FALSE).kind);
-	}
 }
