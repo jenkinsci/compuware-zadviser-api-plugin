@@ -15,7 +15,7 @@ See your data in zAdviser's highly intuitive and interactive dashboards built on
 
 ## Legal Notice
 
-By using a Compuware Plug-in, you are entering into an agreement with Compuware Corporation as follows:  (a) Compuware grants you a non-exclusive, non-transferable, non-sublicensable, revocable license to use and display the Plug-ins on your zAdvisor Application solely for your own internal business use.  Your use of this Compuware Plug-in is subject to any and all software license and maintenance obligations to which Compuware and your, or your employer, have entered into in writing ("Agreements").  This Compuware Plug-in is subject to all restrictions on use set forth in such Agreements.  Subject to the Agreements, this Plug-in and Plug-in Content may not be copied, modified, deleted, reproduced, republished, posted, transmitted, sold, offered for sale, or redistributed without Compuware's prior written permission.  You acknowledge and agree that Compuware may monitor the zAdvisor Application for compliance with the Agreement and these terms and conditions; (b) THE COMPUWARE PLUG-IN IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS.  COMPUWARE DISCLAIMS ANY WARRANTIES, EXPRESS, IMPLIED OR STATUTORY, REGARDING ANY PLUG-IN, INCLUDING WARRANTIES OF ACCURACY, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. COMPUWARE FURTHER DISCLAIMS ANY WARRANTIES REGARDING THE SECURITY, RELIABILITY, AVAILABILITY OR PERFORMANCE OF THE COMPUWARE PLUG-IN.  YOU WILL BE SOLELY RESPONSIBLE FOR ANY DAMAGES TO ANY COMPUTER SYSTEM OR ANY LOSS OR DATA OR INACCURATE DATA THAT RESULTS FROM THE USE OF THE PLUG-INS.  COMPUWARE EXPRESSLY URGES ALL USERS OF THIS PLUG-IN TO UTILIZE THE AVAILABLE AUDIT FEATURES TO ENSURE THAT ALL DATA IS ANALYZED IN THE PLUG-IN (INCLUDING ANY PERSONAL OR IDENTIFIABLE DATA) PRIOR TO SENDING SUCH DATA TO COMPUWARE.  If you do not agree with the terms of this Plug-In, or to any changes, modifications or supplements to these terms tat Compuware may implement in the future, you may terminate your use of the Plug-Ins.  In that case, you agree to promptly remove the Plug-ins from the zAdvisor Application and cease all further use of the Plug-Ins.
+By using a Compuware Plug-in, you are entering into an agreement with Compuware Corporation as follows:  (a) Compuware grants you a non-exclusive, non-transferable, non-sublicensable, revocable license to use and display the Plug-ins on your zAdviser Application solely for your own internal business use.  Your use of this Compuware Plug-in is subject to any and all software license and maintenance obligations to which Compuware and your, or your employer, have entered into in writing ("Agreements").  This Compuware Plug-in is subject to all restrictions on use set forth in such Agreements.  Subject to the Agreements, this Plug-in and Plug-in Content may not be copied, modified, deleted, reproduced, republished, posted, transmitted, sold, offered for sale, or redistributed without Compuware's prior written permission.  You acknowledge and agree that Compuware may monitor the zAdviser Application for compliance with the Agreement and these terms and conditions; (b) THE COMPUWARE PLUG-IN IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS.  COMPUWARE DISCLAIMS ANY WARRANTIES, EXPRESS, IMPLIED OR STATUTORY, REGARDING ANY PLUG-IN, INCLUDING WARRANTIES OF ACCURACY, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. COMPUWARE FURTHER DISCLAIMS ANY WARRANTIES REGARDING THE SECURITY, RELIABILITY, AVAILABILITY OR PERFORMANCE OF THE COMPUWARE PLUG-IN.  YOU WILL BE SOLELY RESPONSIBLE FOR ANY DAMAGES TO ANY COMPUTER SYSTEM OR ANY LOSS OR DATA OR INACCURATE DATA THAT RESULTS FROM THE USE OF THE PLUG-INS.  COMPUWARE EXPRESSLY URGES ALL USERS OF THIS PLUG-IN TO UTILIZE THE AVAILABLE AUDIT FEATURES TO ENSURE THAT ALL DATA IS ANALYZED IN THE PLUG-IN (INCLUDING ANY PERSONAL OR IDENTIFIABLE DATA) PRIOR TO SENDING SUCH DATA TO COMPUWARE.  If you do not agree with the terms of this Plug-In, or to any changes, modifications or supplements to these terms that Compuware may implement in the future, you may terminate your use of the Plug-Ins.  In that case, you agree to promptly remove the Plug-ins from the zAdviser Application and cease all further use of the Plug-Ins.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ Navigate to Manage Jenkins / Configure System and go to Compuware Configurations
 
 ![](docs/images/info.svg) The Topaz Workbench CLI must be installed on the machine that is configured to run the job.
 
-**Host connections**
+**Host Connections**
 
 ![](docs/images/info.svg) If no host connection appears in the Host Connections section, click Add Host Connection.
 
@@ -223,15 +223,13 @@ You can access online information for Compuware products via our Support Center 
 
 At Compuware, we strive to make our products and documentation the best in the industry. Feedback from our customers helps us maintain our quality standards. If you need support services, please obtain the following information before calling Compuware\'s 24-hour telephone support:
 
-- The name, release number, and build number of your product. This information is displayed in the **About **dialog box.
+- The Jenkins job console output that contains any error messages or pertinent information.
 
-- Installation information including installed options, whether the product uses local or network databases, whether it is installed in the default directories, whether it is a standalone or network installation, and whether it is a client or server installation.
+- The name, release number, and build number of your product. This information is displayed in the Jenkins / Plugin Manager and go to the Installed tab. Apply filter: Compuware in order to display all of the installed Compuware plugins.
 
-- Environment information, such as the operating system and release on which the product is installed, memory, hardware and network specification, and the names and releases of other applications that were running when the problem occurred.
+- Job information, whether the job uses Pipeline script or Freestyle project.
 
-- The location of the problem within the running application and the user actions taken before the problem occurred.
-
-- The exact application, licensing, or operating system error messages, if any.
+- Environment information, such as the operating system and release on which the Topaz CLI is installed.
 
 You can contact Compuware in one of the following ways:
 
@@ -255,4 +253,3 @@ To access Compuware\'s site on the Web, go to [https://www.compuware.com](https
 
 See [https://github.com/jenkinsci/compuware-zadviser-api-plugin/releases](https://github.com/jenkinsci/compuware-zadviser-api-plugin/releases/)
 
- 
