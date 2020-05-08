@@ -21,7 +21,7 @@
   </properties>
 
   <name>Compuware zAdviser API</name>
-  <description>Extracts, downloads, encrypts, and uploads zAdviser data.</description>
+  <description>Extracts, downloads, encrypts, and uploads zAdviser data</description>
   <url>https://github.com/jenkinsci/compuware-zadviser-api-plugin</url>
 
   <licenses>
