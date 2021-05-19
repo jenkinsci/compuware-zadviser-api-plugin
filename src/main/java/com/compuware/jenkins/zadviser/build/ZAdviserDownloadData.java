@@ -486,8 +486,6 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			String cliVersion = CLIVersionUtils.getCLIVersion(cliDirectory, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 			CLIVersionUtils.checkCLICompatibility(cliVersion, ZAdviserUtilitiesConstants.ZADVISER_MINIMUM_CLI_VERSION);
 
-			ArgumentListBuilder args = new ArgumentListBuilder();
-
 			assert vChannel != null;
 			Properties remoteProperties = vChannel.call(new RemoteSystemProperties());
 			String remoteFileSeparator = remoteProperties.getProperty(CommonConstants.FILE_SEPARATOR_PROPERTY_KEY);
@@ -498,36 +496,8 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 			logger.println("cliScriptFile: " + cliScriptFile); //$NON-NLS-1$
 			String cliScriptFileRemote = new FilePath(vChannel, cliScriptFile).getRemote();
 			logger.println("cliScriptFileRemote: " + cliScriptFileRemote); //$NON-NLS-1$
-			args.add(cliScriptFileRemote);
-
-			// Get host configuration
-			HostConnection connection = globalConfig.getHostConnection(getConnectionId());
-			StandardUsernamePasswordCredentials credentials = globalConfig.getLoginInformation(run.getParent(), getCredentialsId());
-
-			String host = ArgumentUtils.escapeForScript(connection.getHost());
-			args.add(CommonConstants.HOST_PARM, host);
-
-			String port = ArgumentUtils.escapeForScript(connection.getPort());
-			args.add(CommonConstants.PORT_PARM, port);
-
-			String userId = ArgumentUtils.escapeForScript(credentials.getUsername());
-			args.add(CommonConstants.USERID_PARM, userId);
-
-			String password = ArgumentUtils.escapeForScript(credentials.getPassword().getPlainText());
-			args.add(CommonConstants.PW_PARM);
-			args.add(password, true);
-
-			String protocol = connection.getProtocol();
-			if (StringUtils.isNotBlank(protocol) && !StringUtils.equalsIgnoreCase(protocol, "none")) { //$NON-NLS-1$
-				CLIVersionUtils.checkProtocolSupported(cliVersion);
-				args.add(CommonConstants.PROTOCOL_PARM, protocol);
-			}
-
-			String codePage = connection.getCodePage();
-			args.add(CommonConstants.CODE_PAGE_PARM, codePage);
-
-			String timeout = ArgumentUtils.escapeForScript(connection.getTimeout());
-			args.add(CommonConstants.TIMEOUT_PARM, timeout);
+			
+			ArgumentListBuilder args = globalConfig.getArgumentBuilder(cliScriptFile, cliVersion, run.getParent(), getCredentialsId(), getConnectionId());
 
 			// Get workspace configuration
 			String topazCliWorkspace = workspace.getRemote() + remoteFileSeparator + CommonConstants.TOPAZ_CLI_WORKSPACE
