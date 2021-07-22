@@ -2,6 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2020 Compuware Corporation
+ * (c) Copyright 2020, 2021 BMC Software, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -261,7 +262,7 @@ public class ZAdviserDownloadData extends Builder implements SimpleBuildStep {
 		 *
 		 * @return validation message
 		 */
-		@GET
+		@POST
 		public FormValidation doCheckConnectionId(@QueryParameter String connectionId) {
 			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 			if (StringUtils.isBlank(connectionId)) {
