@@ -85,7 +85,7 @@
     <dependency>
       <groupId>com.compuware.jenkins</groupId>
       <artifactId>compuware-common-configuration</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.15</version>
     </dependency>
     <dependency>
    	  <groupId>org.apache.commons</groupId>
