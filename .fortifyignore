@@ -1,0 +1,20 @@
+#The following files will be ignored while doing fortify scan
+
+#Ignore all config files
+**/*.bat
+**/*.docs
+**/*.ico
+**/*.inf
+**/*.info
+**/*.jar
+**/*.jpg
+**/*.md
+**/*.png
+**/*.properties
+**/*.sh
+**/*.svg
+**/*.txt
+
+#Ignore all test files
+**/*TEST*.*
+**/test/**/*
